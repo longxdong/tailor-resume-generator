@@ -1,0 +1,51 @@
+{
+  "name": "Juan Cruz",
+  "email": "juan.cruz.work@outlook.com",
+  "title": "Senior Software Engineer",
+  "phone": "",
+  "location": "Manila, PH",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Train Up",
+      "location": "",
+      "start_date": "Jul 2022",
+      "end_date": "Present"
+    },
+    {
+      "company": "Literatu",
+      "location": "",
+      "start_date": "Sep 2021",
+      "end_date": "Jul 2022"
+    },
+    {
+      "company": "Kraken",
+      "location": "",
+      "start_date": "Oct 2020",
+      "end_date": "Sep 2021"
+    },
+    {
+      "company": "Eden",
+      "location": "",
+      "start_date": "Oct 2017",
+      "end_date": "May 2020"
+    },
+    {
+      "company": "Senti AI",
+      "location": "",
+      "start_date": "Sep 2016",
+      "end_date": "Oct 2017"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree in Computer Science",
+      "school": "University of the Philippines Diliman",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}

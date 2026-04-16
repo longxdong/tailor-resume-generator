@@ -1,0 +1,39 @@
+{
+  "name": "Adrian Reyes",
+  "title": "Senior Software Engineer",
+  "email": "adrian.reyes.tech@gmail.com",
+  "phone": "",
+  "location": "Malabon, PH",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Cargo Express Freight",
+      "location": "",
+      "start_date": "Jul 2022",
+      "end_date": "Present"
+    },
+    {
+      "company": "Royal Legal Solutions",
+      "location": "",
+      "start_date": "Jul 2019",
+      "end_date": "Jul 2022"
+    },
+    {
+      "company": "RUSH",
+      "location": "",
+      "start_date": "May 2016",
+      "end_date": "Jul 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree in Information Technology",
+      "school": "City of Malabon University",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}

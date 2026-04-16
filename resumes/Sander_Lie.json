@@ -1,0 +1,51 @@
+{
+  "name": "Sander Lie",
+  "email": "sander00121@outlook.com",
+  "phone": "",
+  "location": "Oslo, Oslo, Norway",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Knowit",
+      "location": "",
+      "start_date": "May 2024",
+      "end_date": "Present"
+    },{
+      "company": "Khan Academy",
+      "location": "",
+      "start_date": "Oct 2021",
+      "end_date": "May 2024"
+    },
+    {
+      "company": "Plenty",
+      "location": "",
+      "start_date": "Oct 2020",
+      "end_date": "Oct 2021"
+    },
+    {
+      "company": "Flexport",
+      "location": "",
+      "start_date": "Jun 2017",
+      "end_date": "Oct 2020"
+    },
+    {
+      "company": "Amazon",
+      "title": "QA Intern",
+      "location": "",
+      "start_date": "Apr 2016",
+      "end_date": "Oct 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Georgia Institute of Technology",
+      "start_year": "2012",
+      "end_year": "2016",
+      "grades": "3.98"
+    }
+  ]
+}

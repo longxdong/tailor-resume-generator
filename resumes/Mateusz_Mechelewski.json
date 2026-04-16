@@ -1,0 +1,40 @@
+{
+  "name": "Mateusz Mechelewski",
+  "email": "mateusz.mechelewski.work@outlook.com",
+  "title": "Senior Software Engineer",
+  "phone": "",
+  "location": "Warsaw, PL",
+  "linkedin": "https://www.linkedin.com/in/mateusz-mechelewski-1ab0bb3a4",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Hexagon",
+      "location": "",
+      "start_date": "Apr 2017",
+      "end_date": "Present"
+    },
+    {
+      "company": "Progress",
+      "location": "",
+      "start_date": "Apr 2012",
+      "end_date": "Mar 2017"
+    },
+    {
+      "company": "Meniga",
+      "location": "",
+      "start_date": "Feb 2011",
+      "end_date": "Nov 2011"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "The University of Manchester",
+      "start_year": "2008",
+      "end_year": "2012",
+      "grade": "3.98"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "name": "Pranav Marathe",
+  "title": "",
+  "email": "pranav.marathe077@outlook.com",
+  "location": "San Jose, CA",
+  "linkedin": "",
+  "education": [
+    {
+      "degree": "Bachelor's degree in Computer Engineering",
+      "school": "Georgia Institute of Technology",
+      "start_year": "2014",
+      "end_year": "2018",
+      "grade": "3.94"
+    }
+  ],
+  "experience": [
+    {
+      "company": "NVIDIA",
+      "title": "Senior Software Engineer",
+      "start_date": "Feb 2022",
+      "end_date": "Present",
+      "location": ""
+    },
+    {
+      "company": "NVIDIA",
+      "title": "Software Engineer",
+      "start_date": "Feb 2018",
+      "end_date": "Feb 2022",
+      "location": ""
+    },
+    {
+      "company": "Wheego Technologies, Inc.",
+      "title": "Software Engineer Intern",
+      "start_date": "Jun 2017",
+      "end_date": "Aug 2017",
+      "location": ""
+    },
+    {
+      "company": "Content Thread",
+      "title": "Software Engineer Intern",
+      "start_date": "Aug 2015",
+      "end_date": "Apr 2016",
+      "location": ""
+    },
+    {
+      "company": "CunstomMade, Inc.",
+      "title": "QA Intern",
+      "start_date": "May 2013",
+      "end_date": "Jul 2013",
+      "location": ""
+    }
+  ]
+}

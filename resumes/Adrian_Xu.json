@@ -1,0 +1,57 @@
+{
+  "name": "Adrian Xu",
+  "email": "adrian.xu11@outlook.com",
+  "phone": "",
+  "location": "New York, NY",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Insight Global",
+      "location": "",
+      "start_date": "Apr 2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "BrightOps",
+      "location": "",
+      "start_date": "Jun 2023",
+      "end_date": "Apr 2025"
+    },
+    {
+      "company": "Hexagon Manufacturing Intelligence",
+      "location": "",
+      "start_date": "Jan 2019",
+      "end_date": "May 2023"
+    },
+    {
+      "company": "Progress Software",
+      "location": "",
+      "start_date": "Feb 2018",
+      "end_date": "Dec 2018"
+    },
+    {
+      "company": "NVIDIA",
+      "location": "",
+      "start_date": "Nov 2017",
+      "end_date": "Oct 2018 - Contract"
+    },
+    {
+      "company": "NVIDIA",
+      "title": "QA Intern",
+      "location": "",
+      "start_date": "Feb 2016",
+      "end_date": "Feb 2017"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "school": "New York University",
+      "start_year": "2015",
+      "end_year": "2017"
+    }
+  ]
+}

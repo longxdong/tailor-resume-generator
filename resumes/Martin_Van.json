@@ -1,0 +1,52 @@
+{
+  "name": "Martin Van",
+  "email": "martin.van98@outlook.com",
+  "phone": "",
+  "location": "Warsaw, Poland",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Perficient",
+      "location": "",
+      "start_date": "Oct 2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "Progress Software",
+      "location": "",
+      "start_date": "Apr 2020",
+      "end_date": "Jul 2025"
+    },
+    {
+      "company": "PuzzleHR",
+      "location": "",
+      "start_date": "Feb 2017",
+      "end_date": "Apr 2020"
+    },
+    {
+      "company": "Microsoft",
+      "title": "Contract Software Engineer",
+      "location": "",
+      "start_date": "Mar 2016",
+      "end_date": "Feb 2017"
+    },
+    {
+      "company": "Microsoft",
+      "title": "Software Engineer Intern",
+      "location": "",
+      "start_date": "Mar 2015",
+      "end_date": "Nov 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "University of Manchester",
+      "start_year": "2011",
+      "end_year": "2015"
+    }
+  ]
+}

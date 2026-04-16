@@ -1,0 +1,46 @@
+{
+  "name": "Luke Tomlinson",
+  "email": "luke.tomlinson16@outlook.com",
+  "title": "",
+  "phone": "",
+  "location": "Durham, NC",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Kiggla",
+      "location": "",
+      "start_date": "Dec 2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "Infosys",
+      "location": "",
+      "start_date": "Apr 2021",
+      "end_date": "Nov 2025"
+    },
+    {
+      "company": "WillowTree",
+      "location": "",
+      "start_date": "Jul 2019",
+      "end_date": "Apr 2021"
+    },
+    {
+      "company": "WillowTree",
+      "location": "",
+      "start_date": "Jun 2016",
+      "end_date": "Jul 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree in Computer Engineering",
+      "school": "Cedarville University",
+      "start_year": "2012",
+      "end_year": "2016",
+      "grade": "3.92"
+    }
+  ]
+}

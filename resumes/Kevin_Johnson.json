@@ -1,0 +1,63 @@
+{
+  "name": "Kevin Johnson",
+  "email": "kevin.johnson0926@outlook.com",
+  "phone": "",
+  "location": "Brownsboro, TX",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Darby Consulting",
+      "location": "",
+      "start_date": "May 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Seurat Technologies",
+      "location": "",
+      "start_date": "Apr 2020",
+      "end_date": "May 2024"
+    },
+    {
+      "company": "Poshmark",
+      "location": "",
+      "start_date": "Sep 2018",
+      "end_date": "Apr 2020"
+    },
+    {
+      "company": "Coursera",
+      "location": "",
+      "start_date": "Sep 2017",
+      "end_date": "Sep 2018"
+    },
+    {
+      "company": "Nuro",
+      "location": "",
+      "start_date": "Nov 2015",
+      "end_date": "Aug 2017"
+    },
+    {
+      "company": "Facebook",
+      "location": "",
+      "start_date": "Nov 2015",
+      "end_date": "Aug 2017"
+    },
+    {
+      "company": "Facebook",
+      "title": "Software Engineer Intern",
+      "location": "",
+      "start_date": "Apr 2014",
+      "end_date": "Oct 2014"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "University of Texas at Austin",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}

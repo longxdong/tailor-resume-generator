@@ -1,0 +1,45 @@
+{
+  "name": "Daiki Garcia",
+  "email": "daiki19970719@gmail.com",
+  "phone": "",
+  "location": "San Juan, Philippines",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Hexagon Manufacturing Intelligence",
+      "location": "",
+      "start_date": "Jul 2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "Scribo Learning",
+      "location": "",
+      "start_date": "may 2019",
+      "end_date": "Jul 2023"
+    },
+    {
+      "company": "GitLab",
+      "location": "",
+      "start_date": "Oct 2016",
+      "end_date": "May 2019"
+    },
+    {
+      "company": "Accenture",
+      "title": "Software Engineer Intern",
+      "location": "",
+      "start_date": "Mar 2015",
+      "end_date": "Jun 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Nagoya University",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}

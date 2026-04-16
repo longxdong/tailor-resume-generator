@@ -1,0 +1,45 @@
+{
+  "name": "Gabriel Dang",
+  "email": "gabriel.dang1@outlook.com",
+  "phone": "",
+  "location": "Braşov, Braşov, Romania",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Slalom Marketing Consulting",
+      "location": "",
+      "start_date": "Nov 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Hexagon",
+      "location": "",
+      "start_date": "Apr 2019",
+      "end_date": "Nov 2024"
+    },
+    {
+      "company": "Progress Software",
+      "location": "",
+      "start_date": "Mar 2017",
+      "end_date": "Apr 2019"
+    },
+    {
+      "company": "Accenture",
+      "title": "Software Engineer Intern",
+      "location": "",
+      "start_date": "Mar 2016",
+      "end_date": "Oct 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's Degree in Computer Science",
+      "school": "Texas A&M University",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}

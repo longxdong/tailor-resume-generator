@@ -1,0 +1,51 @@
+{
+  "name": "Alexander Moen",
+  "email": "alex.moen94@outlook.com",
+  "phone": "",
+  "location": "Oslo, Oslo, Norway",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "LANARS",
+      "location": "",
+      "start_date": "Aug 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "GitLab",
+      "location": "",
+      "start_date": "Feb 2020",
+      "end_date": "Aug 2024"
+    },
+    {
+      "company": "Toptal",
+      "location": "",
+      "start_date": "Apr 2019",
+      "end_date": "Feb 2020"
+    },
+    {
+      "company": "Progress Software",
+      "location": "",
+      "start_date": "Oct 2017",
+      "end_date": "Mar 2019"
+    },
+    {
+      "company": "NVIDIA",
+      "title": "Software Engineer Intern",
+      "location": "",
+      "start_date": "Mar 2016",
+      "end_date": "Sep 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "San Jose State University",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}

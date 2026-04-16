@@ -1,0 +1,50 @@
+{
+  "name": "Venu Yara",
+  "email": "venu.yara212@gmail.com",
+  "phone": "",
+  "location": "Louisville, KY",
+  "linkedin": "https://www.linkedin.com/in/venu-reddy-387358264/",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Humana / TCS",
+      "location": "",
+      "start_date": "Aug 2022",
+      "end_date": "Present"
+    },
+    {
+      "company": "FMC",
+      "location": "",
+      "start_date": "Jun 2021",
+      "end_date": "Jun 2022"
+    },
+    {
+      "company": "UPS",
+      "location": "",
+      "start_date": "Dec 2016",
+      "end_date": "Jun 2021"
+    },
+    {
+      "company": "SVS Tech",
+      "location": "",
+      "start_date": "Apr 2013",
+      "end_date": "May 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's Degree in Computer Science",
+      "school": "Northwestern Polytechnic University",
+      "start_year": "",
+      "end_year": "2016"
+    },
+    {
+      "degree": "Bachelor's Degree in Computer Science",
+      "school": "JNTU Hyderabad",
+      "start_year": "",
+      "end_year": "2013"
+    }
+  ]
+}

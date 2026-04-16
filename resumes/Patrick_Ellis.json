@@ -1,0 +1,38 @@
+{
+  "name": "Patrick Ellis",
+  "email": "patrick.ellis.work@outlook.com",
+  "phone": "",
+  "location": "New York, NY",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Sigma Software Group",
+      "location": "",
+      "start_date": "May 2021",
+      "end_date": "Present"
+    },
+    {
+      "company": "Kickstarter",
+      "location": "",
+      "start_date": "Apr 2018",
+      "end_date": "Present"
+    },
+    {
+      "company": "SoundCloud",
+      "location": "",
+      "start_date": "Apr 2011",
+      "end_date": "Sep 2017"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "BA, Computer Science",
+      "school": "Brown University",
+      "start_year": "2007",
+      "end_year": "2010"
+    }
+  ]
+}

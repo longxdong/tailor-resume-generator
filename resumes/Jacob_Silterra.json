@@ -1,0 +1,55 @@
+{
+  "name": "Jacob Silterra",
+  "title": "Machine Learning Engineer",
+  "email":"jacob.silterra@outlook.com",
+  "location": "Greater Boston Area",
+  "linkedin": "",
+  "certifications": [
+    "Deploying Machine Learning Models in Production - Coursera",
+    "Machine Learning Modeling Pipelines in Production - Coursera"
+  ],
+  "education": [
+    {
+      "degree": "Master's degree in Biomathematics, and Computational Biology",
+      "school": "Boston University",
+      "start_year": "2015",
+      "end_year": "2016"
+    },
+    {
+      "degree": "Bachelor's degree in Applied and Engineering Physics",
+      "school": "Cornell University",
+      "start_year": "2011",
+      "end_year": "2015"
+    }
+  ],
+  "experience": [
+    {
+      "company": "TetraScience",
+      "title": "Senior Applied AI/ML Engineer",
+      "start_date": "Aug 2025",
+      "end_date": "Present",
+      "location": ""
+    },
+    {
+      "company": "MIT Jameel Clinic - AI & Health",
+      "title": "Machine Learning Engineer",
+      "start_date": "Oct 2023",
+      "end_date": "Aug 2025",
+      "location": ""
+    },
+    {
+      "company": "Repertoire Immune Medicines",
+      "title": "Senior Software Engineer",
+      "start_date": "Jun 2021",
+      "end_date": "Oct 2023",
+      "location": ""
+    },
+    {
+      "company": "Thomson Reuters",
+      "title": "Data Scientist",
+      "start_date": "Nov 2019",
+      "end_date": "May 2021",
+      "location": ""
+    }
+  ]
+}

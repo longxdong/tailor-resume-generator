@@ -1,0 +1,39 @@
+{
+  "name": "Tyler Deel",
+  "email": "tyler.deel.work@outlook.com",
+  "title": "Senior Software Engineer",
+  "phone": "",
+  "location": "Baltimore, MD",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Capital One",
+      "location": "",
+      "start_date": "Jul 2022",
+      "end_date": "Present"
+    },
+    {
+      "company": "Blackboard",
+      "location": "",
+      "start_date": "Jul 2019",
+      "end_date": "Jul 2022"
+    },
+    {
+      "company": "CACI International",
+      "location": "",
+      "start_date": "May 2017",
+      "end_date": "Jul 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree in Computer Science",
+      "school": "University of Maryland Baltimore County",
+      "start_year": "2012",
+      "end_year": "2017"
+    }
+  ]
+}

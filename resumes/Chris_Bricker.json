@@ -1,0 +1,51 @@
+{
+  "name": "Chris Bricker",
+  "email": "chris.bricker1@outlook.com",
+  "phone": "",
+  "location": "Texas City, TX",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "BrightOps",
+      "location": "",
+      "start_date": "Apr 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "GitHub",
+      "location": "",
+      "start_date": "Feb 2018",
+      "end_date": "Apr 2024"
+    },
+    {
+      "company": "Amazon Web Services",
+      "location": "",
+      "start_date": "Aug 2016",
+      "end_date": "Feb 2018"
+    },
+    {
+      "company": "Google",
+      "title": "Software Engineer Intern",
+      "location": "",
+      "start_date": "Mar 2015",
+      "end_date": "Nov 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "school": "The University of Texas at Austin",
+      "start_year": "2015",
+      "end_year": "2016"
+    },
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "The University of Texas at Austin",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}

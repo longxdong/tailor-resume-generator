@@ -1,0 +1,45 @@
+{
+  "name": "Juan Arrazola",
+  "email": "juan.arrazola12@outlook.com",
+  "phone": "",
+  "location": "Valledupar, Cesar, Colombia",
+  "linkedin": "https://www.linkedin.com/in/juan-arrazola-b90a2938a",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Hexagon Design and Engineering Software",
+      "location": "",
+      "start_date": "Apr 2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "Indra",
+      "location": "",
+      "start_date": "Jan 2022",
+      "end_date": "Mar 2025"
+    },
+    {
+      "company": "Haystack",
+      "location": "",
+      "start_date": "Jul 2018",
+      "end_date": "Dec 2021"
+    },
+    {
+      "company": "SOLTECH",
+      "location": "",
+      "start_date": "Jun 2016",
+      "end_date": "Jun 2018"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's Degree in Computer Science",
+      "school": "National University of Colombia",
+      "start_year": "2012",
+      "end_year": "2016",
+      "grade": "3.98"
+    }
+  ]
+}

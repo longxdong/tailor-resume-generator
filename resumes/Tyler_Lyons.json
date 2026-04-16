@@ -1,0 +1,57 @@
+{
+  "name": "Tyler Lyons",
+  "email": "tylermlyons@outlook.com",
+  "phone": "",
+  "location": "Colorado Springs, CO",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Hexagon Manufacturing Intelligence",
+      "location": "",
+      "start_date": "May 2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "PuzzleHR",
+      "location": "",
+      "start_date": "Mar 2019",
+      "end_date": "Apr 2025"
+    },
+    {
+      "company": "Cargo Express Freight",
+      "location": "",
+      "start_date": "Dec 2016",
+      "end_date": "Feb 2019"
+    },
+    {
+      "company": "Comcast",
+      "location": "",
+      "start_date": "May 2016",
+      "end_date": "Nov 2016 - Contract"
+    },
+    {
+      "company": "Comcast",
+      "title": "Junior Developer Intern – Engineering & Product Department",
+      "location": "",
+      "start_date": "Mar 2015",
+      "end_date": "Aug 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "school": "Colorado School of Mines",
+      "start_year": "2015",
+      "end_year": "2016"
+    },
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Colorado School of Mines",
+      "start_year": "2011",
+      "end_year": "2014"
+    }
+  ]
+}

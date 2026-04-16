@@ -1,0 +1,56 @@
+{
+  "name": "Samuel Wlodawski",
+  "email": "sam.alexander.flr@gmail.com",
+  "phone": "407 495 1030",
+  "location": "Orlando, FL",
+  "linkedin": "https://www.linkedin.com/in/samuel-alexander-wlodawski-646a273a5/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Humana",
+      "location": "",
+      "start_date": "Aug 2025",
+      "end_date": "Feb 2026"
+    },
+    {
+      "company": "Reality AI Lab",
+      "location": "",
+      "start_date": "Aug 2024",
+      "end_date": "Aug 2025"
+    },
+    {
+      "company": "Aster Insights",
+      "location": "",
+      "start_date": "Aug 2022",
+      "end_date": "Jun 2024"
+    },
+    {
+      "company": "Optomi",
+      "location": "",
+      "start_date": "May 2018",
+      "end_date": "May 2022"
+    },
+    {
+      "company": "MQ Exports",
+      "location": "",
+      "start_date": "Jun 2015",
+      "end_date": "Apr 2018"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's Degree in Engineering",
+      "school": "University of Memphis",
+      "start_year": "",
+      "end_year": "2010"
+    },
+    {
+      "degree": "Certificate in Full-Stack Web Development",
+      "school": "UCF Boot Camps",
+      "start_year": "",
+      "end_year": "2024"
+    }
+  ]
+}

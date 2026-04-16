@@ -1,0 +1,45 @@
+{
+  "name": "Kristian Ho",
+  "email": "kristian.ho1@outlook.com",
+  "phone": "",
+  "location": "Oslo, Oslo, Norway",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Kahoot!",
+      "location": "",
+      "start_date": "Aug 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "GitLab",
+      "location": "",
+      "start_date": "May 2020",
+      "end_date": "Aug 2024"
+    },
+    {
+      "company": "Vipps",
+      "location": "",
+      "start_date": "Jul 2018",
+      "end_date": "May 2020"
+    },
+    {
+      "company": "Accenture",
+      "title": "Software Engineer Intern",
+      "location": "",
+      "start_date": "Apr 2017",
+      "end_date": "Oct 2017"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "University of Oslo",
+      "start_year": "2013",
+      "end_year": "2017"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "name": "Cristian Ho",
+  "email": "cristian.ho12@outlook.com",
+  "phone": "",
+  "location": "Braşov, Braşov, Romania",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Pariveda Solutions",
+      "location": "",
+      "start_date": "May 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Etsy",
+      "location": "",
+      "start_date": "Feb 2018",
+      "end_date": "May 2024"
+    },
+    {
+      "company": "Amazon",
+      "location": "",
+      "start_date": "Mar 2017",
+      "end_date": "Feb 2018"
+    },
+    {
+      "company": "Accenture",
+      "title": "Software Engineer Intern",
+      "location": "",
+      "start_date": "Apr 2016",
+      "end_date": "Oct 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's Degree in Computer Engineering",
+      "school": "Georgia Institute of Technology",
+      "start_year": "2014",
+      "end_year": "2016"
+    },
+    {
+      "degree": "Bachelor's Degree in Computer Engineering",
+      "school": "Georgia Institute of Technology",
+      "start_year": "2011",
+      "end_year": "2014"
+    }
+  ]
+}

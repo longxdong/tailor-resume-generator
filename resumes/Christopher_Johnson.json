@@ -1,0 +1,51 @@
+{
+  "name": "Christopher Johnson",
+  "email": "christopher.johnson.dev@outlook.com",
+  "phone": "",
+  "location": "DUNCANVILLE, TX",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Slalom",
+      "location": "",
+      "start_date": "Apr 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Conversion Logix",
+      "location": "",
+      "start_date": "Jul 2019",
+      "end_date": "Apr 2024"
+    },
+    {
+      "company": "GitHub",
+      "location": "",
+      "start_date": "Aug 2016",
+      "end_date": "Jun 2019"
+    },
+    {
+      "company": "Google",
+      "title": "Software Engineer Intern",
+      "location": "",
+      "start_date": "Apr 2015",
+      "end_date": "Oct 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "school": "The University of Texas at Austin",
+      "start_year": "2015",
+      "end_year": "2016"
+    },
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "The University of Texas at Austin",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+{
+  "name": "Andrew Rivera",
+  "email": "andrew.rivera96954@outlook.com",
+  "title": "Senior Software Engineer",
+  "phone": "",
+  "location": "Manila, PH",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Cargo Express Freight",
+      "location": "",
+      "start_date": "Jun 2025",
+      "end_date": "Present"
+    },{
+      "company": "PuzzleHR",
+      "location": "",
+      "start_date": "Jul 2022",
+      "end_date": "May 2025"
+    },
+    {
+      "company": "GitLab",
+      "location": "",
+      "start_date": "Jul 2021",
+      "end_date": "Jul 2022"
+    },
+    {
+      "company": "Kalibrr Learn",
+      "location": "",
+      "start_date": "Jun 2019",
+      "end_date": "Jul 2021"
+    },
+    {
+      "company": "ShopSM",
+      "location": "",
+      "start_date": "May 2018",
+      "end_date": "Jun 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's degree in Computer Science",
+      "school": "University of the Philippines Diliman",
+      "start_year": "2016",
+      "end_year": "2018"
+    },
+    {
+      "degree": "Bachelor's degree in Computer Science",
+      "school": "University of the Philippines Diliman",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}

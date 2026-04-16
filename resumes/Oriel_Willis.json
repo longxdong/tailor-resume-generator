@@ -1,0 +1,40 @@
+{
+  "name": "Oriel Willis",
+  "email": "oriel.willis@gmail.com",
+  "phone": "",
+  "location": "Lakeland, FL",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Publix Super Markets",
+      "location": "",
+      "start_date": "Oct 2019",
+      "end_date": "Present"
+    },
+    {
+      "company": "Rita Staffing",
+      "title": "IT Manager",
+      "location": "",
+      "start_date": "Apr 2017",
+      "end_date": "Oct 2019"
+    },
+    {
+      "company": "Convergys",
+      "title": "Technical Support Engineer",
+      "location": "",
+      "start_date": "Nov 2016",
+      "end_date": "Apr 2017"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree in Information Technology",
+      "school": "Florida International University",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "name": "Jan Kowalski",
+  "email": "jan.kowalski96923@gmail.com",
+  "title": "",
+  "phone": "",
+  "location": "Warsaw, Poland",
+  "linkedin": "https://www.linkedin.com/in/jan-kowalski-b419393b1/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Progress Software",
+      "location": "",
+      "start_date": "Jan 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Pacifica Services",
+      "location": "",
+      "start_date": "Mar 2020",
+      "end_date": "Dec 2023"
+    },
+    {
+      "company": "Ntiva",
+      "location": "",
+      "start_date": "Mar 2017",
+      "end_date": "Mar 2020"
+    },
+    {
+      "company": "Google",
+      "title": "QA Intern",
+      "location": "",
+      "start_date": "Feb 2016",
+      "end_date": "Sep 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Georgia institute of Technology",
+      "start_year": "2012",
+      "end_year": "2016",
+      "grade": "3.98"
+    }
+  ]
+}

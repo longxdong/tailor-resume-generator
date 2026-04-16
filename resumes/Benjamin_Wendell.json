@@ -1,0 +1,53 @@
+{
+  "name": "Benjamin Wendell",
+  "email": "ben.wendell12@outlook.com",
+  "phone": "+1 (631) 446 2845",
+  "location": "Seattle, Washington, United States",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Hexagon Manufacturing Intelligence",
+      "location": "",
+      "start_date": "Jun 2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "Infosys",
+      "location": "",
+      "start_date": "Jul 2022",
+      "end_date": "Feb 2023"
+    },
+    {
+      "company": "Microsoft",
+      "location": "",
+      "start_date": "Sep 2020",
+      "end_date": "Jul 2022",
+      "title": "Software Engineering Contractor"
+    },
+    {
+      "company": "Northrop Grumman",
+      "location": "",
+      "start_date": "Aug 2016",
+      "end_date": "Sep 2020"
+    },
+    {
+      "company": "Amazon Web Services (AWS)",
+      "location": "",
+      "start_date": "Feb 2015",
+      "end_date": "Nov 2015",
+      "title":"QA Intern"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science and Engineering",
+      "school": "University of Nevada, Reno",
+      "start_year": "2011",
+      "end_year": "2016",
+      "grade": "3.96"
+    }
+  ]
+}

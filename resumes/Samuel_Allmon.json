@@ -1,0 +1,51 @@
+{
+  "name": "Samule Allmon",
+  "email": "samuel.allmon.work@outlook.com",
+  "title": "Senior Software Engineer",
+  "phone": "+1 (737) 402-2751",
+  "location": "5641 LIBERTON LANE, AUSTIN, TX 78754",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Cargo Express Freight",
+      "location": "",
+      "start_date": "2021",
+      "end_date": "Present"
+    },
+    {
+      "company": "Royal Legal Solutions",
+      "location": "",
+      "start_date": "2018",
+      "end_date": "2021"
+    },
+    {
+      "company": "Train Up",
+      "location": "",
+      "start_date": "2016",
+      "end_date": "2018"
+    },
+    {
+      "company": "Syntech Solutions",
+      "location": "",
+      "start_date": "2015",
+      "end_date": "2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's Degree in Computer Science",
+      "school": "Northeastern University",
+      "start_year": "2014",
+      "end_year": "2016"
+    },
+    {
+      "degree": "Bachelor's Degree in Computer Science",
+      "school": "Northeastern University",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}
