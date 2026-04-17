@@ -433,7 +433,7 @@ OUTPUT: Return the improved resume as a single JSON object only (no other text, 
 
     const templateData = {
       name: profileData.name,
-      title: typeof resumeContent.title === "string" ? resumeContent.title : "",
+      title: "",
       email: profileData.email,
       phone: profileData.phone,
       location: profileData.location,
