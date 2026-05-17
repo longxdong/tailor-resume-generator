@@ -1,0 +1,51 @@
+{
+  "name": "Daniel Li",
+  "email": "daniel.li785@outlook.com",
+  "phone": "",
+  "location": "New Haven, CT",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Swan Bitcoin",
+      "location": "",
+      "start_date": "Apr 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "CoinList",
+      "location": "",
+      "start_date": "Jul 2019",
+      "end_date": "Apr 2024"
+    },
+    {
+      "company": "Capital One",
+      "location": "",
+      "start_date": "Aug 2016",
+      "end_date": "Jun 2019"
+    },
+    {
+      "company": "Google",
+      "title": "Software Engineer Intern",
+      "location": "",
+      "start_date": "Apr 2015",
+      "end_date": "Oct 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "school": "University of New Haven",
+      "start_year": "2015",
+      "end_year": "2016"
+    },
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "University of New Haven",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}

@@ -4,7 +4,7 @@ export default function Home() {
   const [profiles, setProfiles] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [selectedProfile, setSelectedProfile] = useState("");
-  const [selectedTemplate, setSelectedTemplate] = useState("Resume");
+  const [selectedTemplate, setSelectedTemplate] = useState("Resume-Professional-Sans");
   const [jd, setJd] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
@@ -535,7 +535,7 @@ export default function Home() {
                 </div>
                 <div>
                   <div style={{ fontSize: "24px", marginBottom: "8px" }}>📄</div>
-                  <div style={{ fontSize: "13px", color: "#94a3b8", fontWeight: "500" }}>11 Templates</div>
+                  <div style={{ fontSize: "13px", color: "#94a3b8", fontWeight: "500" }}>14 Templates</div>
                   <div style={{ fontSize: "11px", color: "#64748b" }}>Professional Styles</div>
                 </div>
               </div>

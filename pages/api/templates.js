@@ -11,28 +11,38 @@ export default function handler(req, res) {
     const files = fs.readdirSync(templatesDir);
     
     // Filter only .html files and create template objects
+    const DISPLAY_NAMES = {
+      Resume: "Classic",
+      "Resume-Professional-Sans": "Professional Sans",
+      "Resume-Executive-Minimal": "Executive Minimal",
+      "Resume-Staff-Technical": "Staff Technical",
+    };
+
+    const SORT_PRIORITY = [
+      "Resume-Professional-Sans",
+      "Resume-Executive-Minimal",
+      "Resume-Staff-Technical",
+      "Resume",
+    ];
+
     const templates = files
-      .filter(file => file.endsWith(".html"))
-      .map(file => {
+      .filter((file) => file.endsWith(".html"))
+      .map((file) => {
         const id = file.replace(".html", "");
-        // Convert filename to display name
-        // "Resume-Tech-Teal.html" -> "Tech Teal"
-        // "Resume.html" -> "Classic (Default)"
-        let name;
-        if (id === "Resume") {
-          name = "Classic (Default)";
-        } else {
-          name = id
-            .replace("Resume-", "")
-            .replace(/-/g, " ");
+        let name = DISPLAY_NAMES[id];
+        if (!name) {
+          name = id.replace("Resume-", "").replace(/-/g, " ");
         }
-        
         return { id, name, file };
       })
-      // Sort so default is first, then alphabetically
       .sort((a, b) => {
-        if (a.id === "Resume") return -1;
-        if (b.id === "Resume") return 1;
+        const ai = SORT_PRIORITY.indexOf(a.id);
+        const bi = SORT_PRIORITY.indexOf(b.id);
+        if (ai !== -1 || bi !== -1) {
+          if (ai === -1) return 1;
+          if (bi === -1) return -1;
+          return ai - bi;
+        }
         return a.name.localeCompare(b.name);
       });
 

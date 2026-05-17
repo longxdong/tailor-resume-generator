@@ -8,8 +8,62 @@ import Handlebars from "handlebars";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+/** Normalize dashes and whitespace for consistent PDF output */
+function normalizeTextDashes(text) {
+  if (typeof text !== "string") return text;
+  return text
+    .replace(/\u2014/g, "-")
+    .replace(/\u2013/g, "-")
+    .replace(/\s+-\s+/g, " – ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function normalizeDateDisplay(dateStr) {
+  if (typeof dateStr !== "string") return dateStr;
+  const t = dateStr.trim();
+  if (/^present$/i.test(t)) return "Present";
+  return normalizeTextDashes(t);
+}
+
+/** summary: string[] or string → HTML for {{{summary}}} in templates */
+function formatSummaryHtml(summary, boldToStrong) {
+  const apply = (s) => boldToStrong(normalizeTextDashes(s));
+  const listStyle =
+    "margin:0 0 6px 0;padding-left:1.15em;list-style:disc;font-size:10pt;line-height:1.45;color:#3d3d3d;";
+
+  if (Array.isArray(summary)) {
+    const items = summary.filter((s) => typeof s === "string" && s.trim()).map(apply);
+    if (items.length === 0) return "";
+    return `<ul class="summary" style="${listStyle}">${items.map((li) => `<li>${li}</li>`).join("")}</ul>`;
+  }
+  if (typeof summary === "string" && summary.trim()) {
+    return `<p class="summary">${apply(summary)}</p>`;
+  }
+  return "";
+}
+
+function capYearsInText(text) {
+  if (typeof text !== "string") return text;
+  return text
+    .replace(/\b(1[2-9]|[2-9]\d|\d{3})\s*\+\s*years?\b/gi, "more than 10 years")
+    .replace(/\b(1[2-9]|[2-9]\d|\d{3})\s*years?\b/gi, "more than 10 years");
+}
+
+/** Standard corporate job title only — no stack, JD keywords, or tech after dashes/colons */
+function sanitizeJobTitle(title) {
+  if (typeof title !== "string") return title;
+  let t = title.trim().replace(/\s+/g, " ");
+  t = t.replace(/\s+at\s+.*$/i, "");
+  t = t.replace(/\s*\([^)]*\)\s*$/, "");
+  t = t.replace(/\s*[|:]\s+.*$/, "");
+  t = t.replace(/\s+[–—]\s+.*$/, "");
+  t = t.replace(/\s+-\s+.*$/, "");
+  return t.trim();
+}
+
 // Call GPT with timeout & retries
-async function callGPT(promptOrMessages, model = null, maxTokens = 8000, retries = 2, timeoutMs = 180000) {
+async function callGPT(promptOrMessages, model = null, maxTokens = 80000, retries = 2, timeoutMs = 180000) {
   const resolvedModel = model || process.env.OPENAI_MODEL || "gpt-5-mini";
   while (retries > 0) {
     try {
@@ -54,7 +108,7 @@ export default async function handler(req, res) {
     if (!jd) return res.status(400).send("Job description required");
     
     // Default to Resume.html if no template specified
-    const templateName = template || "Resume";
+    const templateName = template || "Resume-Professional-Sans";
 
     // Load profile JSON
     console.log(`Loading profile: ${profile}`);
@@ -87,139 +141,98 @@ export default async function handler(req, res) {
 
     const yearsOfExperience = calculateYears(profileData.experience);
 
-    // Build base resume text for the prompt (name, contact, experience, education)
-    const baseResume = [
+    // JSON file: personal facts + employment spine (company + dates). Titles and narrative are JD-driven in the model prompt.
+    const employmentSpine = Array.isArray(profileData.experience)
+      ? profileData.experience.map((j) => {
+          const loc = j.location && String(j.location).trim() ? ` | ${j.location}` : "";
+          return `${j.company} | ${j.start_date} - ${j.end_date}${loc}`;
+        })
+      : [];
+
+    const educationLines = Array.isArray(profileData.education)
+      ? profileData.education.map(
+          (e) =>
+            `${e.degree}, ${e.school} (${e.start_year}-${e.end_year})${e.grade ? " | " + e.grade : ""}`
+        )
+      : [];
+
+    const candidateContext = [
+      "CANDIDATE PERSONAL (use exactly for the resume header; do not change spelling of name or contact):",
       profileData.name,
-      [profileData.email, profileData.phone, profileData.location].filter(Boolean).join(" | "),
+      [
+        profileData.email,
+        profileData.phone,
+        profileData.location,
+        profileData.linkedin,
+        profileData.website,
+      ]
+        .filter(Boolean)
+        .join(" | "),
       "",
-      "PROFESSIONAL EXPERIENCE",
-      ...profileData.experience.map((j) => {
-        const titleHint =
-          j.title && String(j.title).trim()
-            ? j.title
-            : "Title not in source (you MUST infer a distinct, realistic job title for this stint only; do not reuse the same title for other companies or copy the JD headline onto every row)";
-        return `${titleHint} at ${j.company}${j.location ? ", " + j.location : ""} | ${j.start_date} - ${j.end_date}`;
-      }),
+      "EDUCATION (facts only):",
+      ...educationLines,
       "",
-      "EDUCATION",
-      ...profileData.education.map(
-        (e) => `${e.degree}, ${e.school} (${e.start_year}-${e.end_year})${e.grade ? " | " + e.grade : ""}`
-      ),
+      "EMPLOYMENT SPINE (non-negotiable: keep these company names and start_date/end_date exactly. Same number of roles as listed. Ignore any job titles in the JSON file; generate JD-aligned titles and bullets only.):",
+      ...employmentSpine.map((line) => `- ${line}`),
     ].join("\n");
 
-    const resumePromptTemplate = `You are a world-class technical resume assistant.
+    const resumePromptTemplate = `You are an expert resume writer producing offer-worthy, ATS-optimized resumes aligned to the Job Description (JD).
 
-SYSTEM INSTRUCTION: Make the resume align as closely as possible with the Job Description (JD). Must proactively REPLACE, REPHRASE, and ADD bullet points under each Experience entry, especially recent/current roles, to ensure the language, skills, and technologies match the JD specifically. Do NOT leave any Experience section or bullet point unchanged if it could better reflect or incorporate keywords, duties, or requirements from the JD. Acceptable and encouraged to write NEW bullet points where there are relevant experiences (even if not previously mentioned). Prioritize jobs/roles closest to the desired job.
+INPUT RULES (CRITICAL):
+- "CANDIDATE PERSONAL" and "EDUCATION" are the only authoritative biographical facts from the candidate file.
+- "EMPLOYMENT SPINE" lists real employers and date ranges. Preserve each company name and start_date and end_date exactly. Same number of experience rows as spine rows. Ignore any titles stored in the JSON file.
+- Generate summary, skills, job titles, and experience bullets from the JD (not from a prior resume narrative). Stay broadly plausible per employer and dates.
 
-Your main objectives:
-1. Maximize keyword/skills and responsibilities match between the resume and the job description (JD). Use the exact relevant technology, tool, process, or methodology names from the JD wherever accurate.
-  1a. Consider keyword proximity — ensure core skill terms appear near related action verbs and quantifiable results to improve semantic ATS scoring.
-  1b. Cross-link skills (e.g., "React with TypeScript," "AWS Lambda for automation") to simulate real project context and improve weighted keyword grouping.
-  1c. Focus on the required skills, technologies, and ecosystems from the JD regardless of the original resume, and use them to create realistic and relevant bullet points.
-2. Preserve all original company names, job titles, and periods/dates in the Professional Experience section.
-  2a. TITLE PER ROLE VS TARGET ROLE (CRITICAL): The JSON root field "title" is the candidate's TARGET headline for this application (align with the JD, e.g. "Senior Backend Engineer"). Each object in "experience" has its own "title" for THAT employer and date range ONLY. NEVER set every experience "title" to the same string as the root "title" or to the same string as each other. Older jobs must use lower seniority (e.g. Software Engineer, Backend Engineer, Junior Developer, ETL Developer) and newer jobs higher seniority where plausible; reflect realistic career progression across years. If the base resume lists a title for a job, keep that title or a minor wording tweak for ATS (do not flatten all roles to "Senior X"). If a title was missing in the base resume, infer DISTINCT titles per row from dates, company, and duties—still never one identical title repeated for every company.
-  2b. INDUSTRY ALIGNMENT: Identify the JD's industry (e.g., fintech, healthcare, retail). For each Experience entry, check whether the company name/type could plausibly belong to that industry:
-  - If the company is generic or ambiguous (e.g., "LLC," "Inc.," "Solutions," "Tech Corp," or names that do not clearly indicate a different industry), write the experience bullets and context as if the role were in the JD's industry. Use that industry's terminology, domain, and typical responsibilities where accurate.
-  - If the company clearly belongs to another industry (e.g., "State University," "School District," "Hospital System," "Education Corp"), do NOT relabel or reframe the company as the JD's industry. Keep the experience context consistent with that company's actual industry; only align skills, technologies, and transferable duties to the JD.
-  2c. FALLBACK ROLE WHEN NO COMPANY FITS JD INDUSTRY: If every company on the resume is clearly tied to an industry that cannot plausibly be the JD's industry (e.g., all are education or healthcare while the JD is fintech), add exactly one part-time role with company name "Cascade Investment" in an appropriate time period (e.g., overlapping or adjacent to existing roles, or in a gap). Place this role in the correct chronological position within the Professional Experience section—i.e., order all roles by date (most recent first) and insert the Cascade Investment entry where its dates fall, not at the end of the list. Use a job title and bullets that fit both retail and the JD's required skills/industry context. Keep the role concise (e.g., 4–6 bullets). Do not add this role if at least one existing company could plausibly be in the JD's industry (e.g., generic LLC/Inc.).
-  2d. EXPERIENCE HEADER FORMAT (ATS-CRITICAL): For each experience entry, the "title" field is the SPECIFIC job title for THAT role only (not the JD headline repeated everywhere). NEVER use a generic placeholder like "Role at CompanyName". The template shows title and company separately. When the SAME company appears multiple times, give each entry a DISTINCT title reflecting progression (e.g. "Software Engineer" then "Senior Software Engineer"). Across DIFFERENT companies, titles must differ to reflect seniority and tenure unless the source resume truly used the same level at each (still vary wording when levels match, e.g. "Backend Engineer" vs "Software Engineer II").
-  2e. COMPANY-APPROPRIATE REALISM: For experience entries where the company is a well-known, recognizable organization (e.g., GitHub, Google, Microsoft, Meta, Amazon, Apple, Netflix, Stripe, etc.), the bullet points MUST describe work that is plausible for that company's actual business, products, and technical domain. Do not write generic "big tech platform" bullets that could apply to any company; ground the narrative in what that company is known for (e.g., at GitHub: developer platform, git hosting, repos, pull requests, Actions CI/CD, security features like Dependabot, APIs for repos and workflows). If the JD requests technologies that do not align with the company's known domain, still align the resume by emphasizing transferable responsibilities and adjacent skills rather than inventing company-specific projects that sound wrong. For generic or lesser-known companies (e.g., "Tech Solutions LLC"), generic technical bullets are acceptable. The goal is that a reader familiar with the company would find the experience credible.
-3. In each Experience/job entry, produce 8–10 bullets (one sentence per bullet), each a concise storytelling sentence (challenge → action → result). This is a hard requirement: NEVER fewer than 8 bullets per role. The longest company should have 10 bullets, and the others should have 8–10 bullets according to company period length. Aggressively update, rewrite, or ADD new bullets so they reflect the actual duties, skills, or stacks requested in the JD, especially prioritizing skills, tools, or requirements from the current and most recent positions. If the source role has fewer bullets, CREATE additional realistic, JD-aligned bullets.
-  3a. KEYWORD PLACEMENT IN BULLETS: Put high-value JD keywords (e.g. DCIM, CMDB, ITSM, domain-specific terms) at or near the START of bullets when relevant, not only in the middle or end. For example: "Built DCIM workflows for rack deployment and OS installs..." or "Led Change Management processes for...". This improves ATS parsing and keyword matching. Repeat critical JD terms across multiple bullets where accurate.
-  3b. ITSM / PROCESS KEYWORDS: If the JD mentions ITIL, service management, change management, incident management, or similar, include EXPLICIT phrasing in bullets and Summary where accurate: Incident Management, Problem Management, Change Management, Service Management, Configuration Management. Do not rely only on "ITIL concepts"; use the exact process names the ATS may be matching (e.g. "Implemented Change Management workflows...", "Reduced MTTR via Incident Management practices...").
-4. Make the experiences emphasize the main tech stack from the JD in the most recent or relevant roles, and distribute additional or secondary JD requirements across earlier positions naturally. Each company's experience should collectively cover the full range of JD skills and duties.
-Include explicit database-related experience in the Professional Experience section.
-5. Place the SKILLS section immediately after the SUMMARY section and before the PROFESSIONAL EXPERIENCE section. This ensures all key stacks and technologies are visible at the top of the resume for ATS and recruiters.
-6. In the Summary, integrate the most essential and high-priority skills, stacks, and requirements from the JD, emphasizing the strongest elements from the original. Keep it dense with relevant keywords and technologies, but natural in tone. In the Summary, explicitly emphasize both startup experience (e.g. fast-paced, 0–1, scaling, wearing multiple hats, agility) and enterprise experience (e.g. large-scale systems, compliance, cross-org collaboration, established processes) when the candidate's base resume includes both; use phrases like "experience in both startups and enterprise environments" or "blend of startup and enterprise" where accurate.
-7. In every section (Summary, Skills, Experience), INCLUDE as many relevant unique keywords and technologies from the job description as possible.
-8. CRITICAL SKILLS SECTION: Create an EXCEPTIONALLY RICH, DENSE, and COMPREHENSIVE Skills section. Extract and list EVERY technology, tool, framework, library, service, and methodology from BOTH the JD AND candidate's experience. Make it so comprehensive it dominates keyword matching.
-  8a. Include ecosystems even if not explicitly in the JD but common to that tech stack (e.g., REST, GraphQL, CI/CD).
-  8b. Avoid duplicates but prioritize variety (e.g., list both "Docker" and "Containerization").
-  8c. List them in STRUCTURE, Order skill groups by the JD's emphasis (frontend-first, backend-first, etc.).
-  8d. MINIMUM PER CATEGORY: Each skills category (e.g. Languages, Backend, Frontend, Databases) must list MORE than 10 items. This is a hard requirement. Expand each category with related technologies, variants, and ecosystem terms from the JD and experience until every category has at least 11 skills. Add adjacent tools, libraries, and methodologies to reach the minimum (e.g. for Languages add runtimes, query languages, markup; for Backend add APIs, protocols, testing; for DevOps add cloud services, security tools).
+JD ALIGNMENT:
+- Root "title" = primary target role from the JD in plain form (e.g. "Senior Software Engineer", "Technical Architect"). No " at Company".
+- JOB TITLE FORMAT (CRITICAL): Use short, standard corporate titles only (typically 2–5 words: seniority + role family). NEVER append technologies, stacks, or JD keywords after dashes, colons, pipes, or parentheses. WRONG: "Senior Software Engineer - C#", "Technical Architect – .NET Core & Angular". RIGHT: "Senior Software Engineer", "Technical Architect". Put all tech in skills and bullets, not in title strings.
+- Each experience[].title: same job family as the JD; show seniority progression (more junior earlier, closest to JD level on most recent role). Titles must not all be identical; still no tech/stack suffixes on any title.
 
-9. Preserve all original quantified metrics (numbers, percentages, etc.) and actively introduce additional quantification in new or reworded bullets wherever possible. Use measurable outcomes, frequency, scope, or scale to increase the impact of each responsibility or accomplishment. Strive for at least 75% of all Experience bullet points to include a number, percentage, range, or scale to strengthen ATS, recruiter, and hiring manager perception.
-10. Strictly maximize verb variety: No action verb (e.g., developed, led, built, designed, implemented, improved, created, managed, engineered, delivered, optimized, automated, collaborated, mentored) may appear more than twice in the entire document, and never in adjacent or back-to-back bullet points within or across jobs. Each bullet must start with a unique, action-oriented verb whenever possible.
-11. In all Experience bullets, prefer keywords and phrasing directly from the JD where it truthfully reflects the candidate's background and would boost ATS/recruiter relevance.
-12. Distribute JD-aligned technologies logically across roles.
-- Assign primary/core technologies from the JD to the most recent or relevant positions.
-- Assign secondary or supporting technologies to earlier roles.
-- Ensure all key JD technologies appear at least once across the resume.
+SUMMARY (bullet format):
+- Return "summary" as a JSON array of 4–6 strings (each string is one summary bullet, not a paragraph).
+- Each bullet: one idea, strong action verb at the start (Led, Built, Reduced, Delivered, Architected, Partnered, etc.), weave JD tech with **bold** on tools/platforms where natural.
+- Include optional JD technologies when relevant (e.g. Vue3, MAUI/Xamarin, BI/ML, HTML5/CSS3, Python/Django) even if secondary to core stack.
+- If the candidate has more than 10 years of experience, say only "more than 10 years" or "over 10 years" in summary text, never an exact count like 14 years.
 
-13. Ensure natural tone and realism. Only include technologies or responsibilities that the candidate could reasonably have used, based on their career path or industry. For well-known companies (e.g., GitHub, Google, Meta), responsibilities and technologies must also be plausible for that company's real products and domain.
-14. The final resume should read as cohesive, naturally written, and contextually plausible—not artificially optimized.
-14a. NO FLASHY FABRICATION: Do not invent conference talks, publications, patents, awards, press, "thought leadership," or highly specific public claims unless they exist in the base resume. Do not invent extreme scale metrics (users, engineers, events/day, dollars saved) unless they are already present in the base resume or are conservative and clearly plausible for the role and time period.
-15. Maintain all original section headers and formatting. Do not include commentary or extra text outside the resume.
-16. STYLE CONSTRAINTS:
-- No em dashes (—). Use plain connectors (commas, semicolons, "and") or simple hyphens when necessary.
-- Use concise storytelling bullets (challenge - action - result) rather than task lists.
-- Prefer non-rounded percentages when plausible (e.g., 33%, 47%, 92%) to convey precision.
-- Prioritize impact, metrics, and results over generic responsibilities in every bullet.
+TECHNICAL SKILLS:
+- Mirror JD categories and vocabulary. In each category array, list highest-value JD keywords FIRST, then related tools.
+- Include JD-required skills first; add optional/adjacent skills from the JD when plausible (Vue3, MAUI, Xamarin, BI, ML, HTML5, CSS3, Python, Django, etc.).
+- Roughly 6–14 items per category when justified; omit empty categories.
 
-17. BOLD FORMATTING (**double asterisks**):
+EXPERIENCE BULLETS:
+- Approximately 4–8 bullets per role (fewer for short internships).
+- One idea per bullet. Start with a strong action verb. Include **bold** on key technologies.
+- At least 75% of bullets across the resume should include a measurable outcome (%, latency, throughput, time saved, scale, ticket volume, team size, etc.). Use plausible, modest numbers; avoid absurd claims.
+- Gold-pattern example: "Reduced API response time by 40% by implementing **Redis** caching and query optimization in **SQL Server** for multi-tenant SaaS service."
+- Where the JD implies full-stack or platform work, include explicit front-end collaboration in at least one bullet per recent role (e.g. partnered with front-end teams on API contracts, UI integration, design reviews).
+- Weave optional JD tech into bullets when relevant to that role's timeframe.
 
-BOLD ONLY THESE:
-- Technical terms in Summary text and Work Experience bullets (languages, frameworks, tools, databases, cloud services)
-- ONLY the category/group label in Skills section (the word before the colon, including the colon)
-NEVER BOLD:
-- Section headers (Summary, Skills, Work Experience, Education)
-- Job titles, company names, dates, or any part of role lines
-- ANY individual skills listed after the colon in Skills section - NEVER bold these, they must be plain text
-- Education details (degrees, universities, years)
+CONSISTENCY:
+- Use the same date format as the spine (e.g. "Aug 2024 – Present"). Use an en-dash surrounded by spaces between dates in display strings if you output a combined range in text; in JSON use separate start_date and end_date fields exactly as in the spine.
+- Title Case for skill category names. No em dashes (—). No emojis.
 
-SKILLS SECTION BOLD RULE (CRITICAL):
-In the Skills section, ONLY bold the category name before the colon. The skills themselves after the colon must NEVER be bold.
-✓ CORRECT: • Languages: JavaScript, TypeScript, Python, SQL, HTML5, CSS3
-✗ WRONG: • **Languages:** **JavaScript**, **TypeScript**, **Python**
-✗ WRONG: • Languages: **JavaScript**, **TypeScript**, **Python**
+BOLD (**double asterisks**): only on technical terms in summary bullets and experience bullets. Never bold job titles, companies, or dates.
 
-EXAMPLES:
-✓ Summary: ...expertise in **React**, **Node.js**, and **AWS**...
-✓ Software Engineer at RTA: Jul 2024 - Present (no bold anywhere)
-✓ • Built APIs using **FastAPI** and **PostgreSQL**
-✓ • **Languages:** JavaScript, TypeScript, Python
-✓ • **Frontend:** React, Next.js, Vue.js, Tailwind CSS
-✗ **Summary:** / **AI/ML Engineer** / **Languages:** **JavaScript**, **Python**
+Here is the candidate context (personal + education + employment spine only):
 
-Rule: Each **bold** must start and end on the same line. When in doubt, don't bold.
-
-Here is the base resume:
-
-\${baseResume}
+\${candidateContext}
 
 Here is the target job description:
 
 \${jobDescription}
 
-ANTI-DETECTION / HUMANIZATION RULES:
+FINAL CHECK:
+- summary is an array of 4–6 bullets; skills ordered JD-first; most experience bullets have metrics; recent roles mention front-end collaboration when JD fits; spine companies/dates unchanged.
+- Every title field is a plain role name with no technology suffix (no " - C#", no " – .NET", no parenthetical stack).
 
-- Vary phrasing styles slightly between sections (avoid repeating identical phrases like "Worked on" or "Responsible for").
-- Introduce occasional stylistic imperfections (e.g., omitting articles naturally, slight tense mix in long experiences).
-- Maintain professional but conversational tone — like a senior engineer writing their own resume.
-- Include subtle domain context or role-specific anecdotes (e.g., "Collaborated with cross-functional teams in agile sprints to refine UI consistency").
-- Ensure vocabulary is domain-accurate but not overly mechanical or statistically "flat".
-- Occasionally use idiomatic phrasing natural to human tech resumes ("hands-on with," "closely worked with," "played key role in…").
+OUTPUT: Return a single JSON object only (no markdown fences, no commentary):
 
-Before outputting, perform a final pass to:
+{"title":"<plain JD role e.g. Senior Software Engineer>","summary":["<bullet 1 with **bold**>","<bullet 2>",...],"skills":{"<CategoryName>":["<JD keyword first>",...],...},"experience":[{"title":"<plain role e.g. Software Engineer>","company":"<exact from spine>","location":"","start_date":"<exact from spine>","end_date":"<exact from spine>","details":["<bullet with metric + **bold** tech>",...]}]}
 
-- Smooth transitions between bullets within each job.
-- Reduce redundancy across jobs (avoid repeating identical achievements).
-- Re-evaluate flow to ensure the document reads naturally aloud.
-- Guarantee every section has both high ATS keyword density and human readability balance.
-- Verify experience titles: no two different employers should share the exact same job title string unless the base resume truly had that edge case; the root JSON "title" (JD headline) must not be copied onto every experience "title".
-
-YEARS OF EXPERIENCE IN SUMMARY: If the candidate has more than 10 years of experience, in the Summary refer to it ONLY as "more than 10 years" or "over 10 years". Never use the exact number (e.g. do not write 12+, 13+, 14+, 15+ years).
-
-SUMMARY LENGTH: The Summary must be between 700 and 800 letters. This is a hard requirement. Write a substantial, dense paragraph (or multiple paragraphs) that covers experience, key skills, technologies, achievements, and JD alignment—never fewer than 500 letters.
-
-SUMMARY — STARTUP AND ENTERPRISE: When the base resume shows work at both smaller/early-stage companies (startups) and larger or well-known organizations (enterprise), the Summary MUST explicitly call out both. Include at least one clear phrase that signals startup experience (e.g. "startup experience," "high-growth environments," "early-stage," "0-to-1") and at least one that signals enterprise experience (e.g. "enterprise," "large-scale," "Fortune 500," "regulated environments"). If the candidate has only one type, emphasize that type only; do not invent the other.
-
-OUTPUT: Return the improved resume as a single JSON object only (no other text, no markdown). Use this exact structure. Preserve all company names and dates from the base resume. The root "title" field is the APPLICATION HEADLINE (match the JD, e.g. "Senior Backend Engineer"). Each experience[].title is ONLY that row's real role at that company (different strings across different employers; show seniority progression over time). Never set every experience[].title to the same text as the root "title". For each experience entry, "title" must be a specific job title only—never "Role at CompanyName". When the same company appears twice, use two distinct titles showing promotion. In the "skills" object, EVERY category must have MORE than 10 items in its array (minimum 11 per category). Use **bold** for technical terms in summary and in experience details as per your bold rules. Order experience by date (most recent first). Include 8–10 bullets per role in details. If you added a Cascade Investment role, include it in experience with its company, title, dates, and details.
-
-{"title":"<application headline from JD only, no company>","summary":"<**bold** for tech terms; if 10+ years exp use only 'more than 10 years'; emphasize startup and enterprise experience when present>","skills":{"<CategoryName>":["skill1","skill2",...],...},"experience":[{"title":"<this row only, e.g. most recent Senior Backend Engineer; older rows Junior/Software Engineer/ETL Developer etc., all distinct>","company":"<company name>","location":"<location or empty string>","start_date":"<start>","end_date":"<end>","details":["<bullet with **bold**; lead with key JD terms when relevant>",...]}]}`;
+Order experience most recent first (same order as spine).`;
 
     const prompt = resumePromptTemplate
-      .replace(/\$\{baseResume\}/g, baseResume)
+      .replace(/\$\{candidateContext\}/g, candidateContext)
       .replace(/\$\{jobDescription\}/g, jd);
 
     const aiResponse = await callGPT(prompt);
@@ -239,8 +252,10 @@ OUTPUT: Return the improved resume as a single JSON object only (no other text, 
       console.log("🔄 Retrying with reduced requirements to fit in token limit...");
 
       const concisePrompt = prompt
-        .replace(/8–10 bullets per role/g, "6–8 bullets per role")
-        .replace(/NEVER fewer than 8 bullets per role/g, "NEVER fewer than 6 bullets per role");
+        .replace(/4–6 strings/g, "3–4 strings")
+        .replace(/Approximately 4–8 bullets per role/g, "Approximately 3–5 bullets per role")
+        .replace(/roughly 6–14 items per category/g, "roughly 5–9 items per category")
+        .replace(/At least 75% of bullets/g, "At least 60% of bullets");
 
       const retryResponse = await callGPT(concisePrompt, null, 10000);
       console.log("Retry Response Metadata:");
@@ -308,63 +323,65 @@ OUTPUT: Return the improved resume as a single JSON object only (no other text, 
       }
     }
     
-    // Validate required fields
-    if (!resumeContent.title || !resumeContent.summary || !resumeContent.skills || !resumeContent.experience) {
+    // Validate required fields (summary may be string or array of bullets)
+    const hasSummary =
+      (typeof resumeContent.summary === "string" && resumeContent.summary.trim()) ||
+      (Array.isArray(resumeContent.summary) &&
+        resumeContent.summary.some((s) => typeof s === "string" && s.trim()));
+
+    if (!resumeContent.title || !hasSummary || !resumeContent.skills || !resumeContent.experience) {
       console.error("Missing required fields in AI response:", Object.keys(resumeContent));
       throw new Error("AI response missing required fields (title, summary, skills, or experience)");
     }
 
-    // Title: display only the job title, not "Title at Company"
-    if (typeof resumeContent.title === "string" && resumeContent.title.includes(" at ")) {
-      resumeContent.title = resumeContent.title.replace(/\s+at\s+.*$/i, "").trim();
+    const spineLen = Array.isArray(profileData.experience) ? profileData.experience.length : 0;
+    const aiExpLen = Array.isArray(resumeContent.experience) ? resumeContent.experience.length : 0;
+    if (spineLen > 0 && aiExpLen !== spineLen) {
+      console.warn(
+        `Experience row count from model (${aiExpLen}) does not match employment spine in JSON (${spineLen}); PDF may not match your profile file.`
+      );
     }
 
-    // If every experience row shares one title (common model mistake), reuse profile titles when present
-    if (Array.isArray(resumeContent.experience) && Array.isArray(profileData.experience)) {
-      const aiExp = resumeContent.experience;
-      const profExp = profileData.experience;
-      if (aiExp.length >= 2 && aiExp.length === profExp.length) {
-        const norm = (t) => (typeof t === "string" ? t.trim().toLowerCase() : "");
-        const first = norm(aiExp[0]?.title);
-        const allSame = first && aiExp.every((e) => norm(e?.title) === first);
-        if (allSame) {
-          const profileHasTitles = profExp.some((j) => j.title && String(j.title).trim());
-          if (profileHasTitles) {
-            aiExp.forEach((e, i) => {
-              const pt = profExp[i]?.title;
-              if (pt && String(pt).trim()) e.title = String(pt).trim();
-            });
-            console.log("Restored per-role titles from profile JSON (model had used one title for every job)");
-          } else {
-            console.warn(
-              "All experience titles identical; profile JSON has no per-job titles. Add a \"title\" field per role in resumes/*.json for best results."
-            );
-          }
-        }
-      }
-    }
-
-    // Summary: if experience > 10 years, show only "more than 10 years", never exact number (12+, 13+, etc.)
-    if (yearsOfExperience > 10 && typeof resumeContent.summary === "string") {
-      resumeContent.summary = resumeContent.summary.replace(/\b(1[2-9]|[2-9]\d|\d{3})\s*\+\s*years?\b/gi, "more than 10 years");
-      resumeContent.summary = resumeContent.summary.replace(/\b(1[2-9]|[2-9]\d|\d{3})\s*years?\b/gi, "more than 10 years");
+    if (typeof resumeContent.title === "string") {
+      resumeContent.title = sanitizeJobTitle(resumeContent.title);
     }
 
     // Convert **bold** to <strong> for HTML template
-    const boldToStrong = (s) => (typeof s === "string" ? s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>") : s);
-    resumeContent.summary = boldToStrong(resumeContent.summary);
+    const boldToStrong = (s) =>
+      typeof s === "string" ? s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>") : s;
+
+    // Summary: cap years wording; render as bullet list HTML for templates
+    if (yearsOfExperience > 10) {
+      if (typeof resumeContent.summary === "string") {
+        resumeContent.summary = capYearsInText(resumeContent.summary);
+      } else if (Array.isArray(resumeContent.summary)) {
+        resumeContent.summary = resumeContent.summary.map(capYearsInText);
+      }
+    }
+
+    const summaryHtml = formatSummaryHtml(resumeContent.summary, boldToStrong);
+
     if (Array.isArray(resumeContent.experience)) {
       resumeContent.experience.forEach((exp) => {
-        if (Array.isArray(exp.details)) exp.details = exp.details.map(boldToStrong);
+        if (Array.isArray(exp.details)) {
+          exp.details = exp.details.map((d) => boldToStrong(normalizeTextDashes(d)));
+        }
+        if (typeof exp.title === "string") exp.title = sanitizeJobTitle(exp.title);
       });
     }
 
-    // Skills section: remove ** from category names (e.g. "**Languages**" -> "Languages") so no asterisks display
+    // Skills: clean category keys; dedupe items; preserve JD-first order from model
     if (resumeContent.skills && typeof resumeContent.skills === "object") {
       const skillsClean = {};
       for (const [key, value] of Object.entries(resumeContent.skills)) {
-        const cleanKey = typeof key === "string" ? key.replace(/\*/g, "").trim() : key;
-        skillsClean[cleanKey || key] = value;
+        const cleanKey =
+          typeof key === "string"
+            ? key.replace(/\*/g, "").trim().replace(/\b\w/g, (c) => c.toUpperCase())
+            : key;
+        const items = Array.isArray(value)
+          ? [...new Set(value.map((v) => (typeof v === "string" ? v.trim() : v)).filter(Boolean))]
+          : value;
+        skillsClean[cleanKey || key] = items;
       }
       resumeContent.skills = skillsClean;
     }
@@ -409,37 +426,38 @@ OUTPUT: Return the improved resume as a single JSON object only (no other text, 
     
     const compiledTemplate = Handlebars.compile(templateSource);
 
-    // Use AI experience when it includes company/dates (e.g. with Cascade Investment); else merge profile + AI by index
     const aiExp = resumeContent.experience || [];
-    const hasFullExperience = aiExp.length > 0 && aiExp.every((e) => e.company != null && e.start_date != null && e.end_date != null);
-    // Do not pass company location to template (templates keep {{#if location}} for optional future use)
-    const experience = hasFullExperience
-      ? aiExp.map((e) => ({
-          title: e.title || "Engineer",
-          company: e.company,
-          location: "",
-          start_date: e.start_date,
-          end_date: e.end_date,
-          details: Array.isArray(e.details) ? e.details : [],
-        }))
-      : profileData.experience.map((job, idx) => ({
-          title: job.title || aiExp[idx]?.title || "Engineer",
-          company: job.company,
-          location: "",
-          start_date: job.start_date,
-          end_date: job.end_date,
-          details: aiExp[idx]?.details || [],
-        }));
+    const spine = profileData.experience || [];
+
+    // Always anchor company/dates to JSON spine when counts match; use AI for titles and bullets
+    const experience =
+      spine.length > 0 && aiExp.length === spine.length
+        ? spine.map((job, idx) => ({
+            title: sanitizeJobTitle(aiExp[idx]?.title || "Engineer"),
+            company: job.company,
+            location: job.location && String(job.location).trim() ? job.location : "",
+            start_date: normalizeDateDisplay(job.start_date),
+            end_date: normalizeDateDisplay(job.end_date),
+            details: Array.isArray(aiExp[idx]?.details) ? aiExp[idx].details : [],
+          }))
+        : aiExp.map((e) => ({
+            title: sanitizeJobTitle(e.title || "Engineer"),
+            company: e.company,
+            location: e.location && String(e.location).trim() ? e.location : "",
+            start_date: normalizeDateDisplay(e.start_date),
+            end_date: normalizeDateDisplay(e.end_date),
+            details: Array.isArray(e.details) ? e.details : [],
+          }));
 
     const templateData = {
       name: profileData.name,
-      title: "",
+      title: typeof resumeContent.title === "string" ? sanitizeJobTitle(resumeContent.title) : "",
       email: profileData.email,
       phone: profileData.phone,
       location: profileData.location,
       linkedin: profileData.linkedin,
       website: profileData.website,
-      summary: resumeContent.summary,
+      summary: summaryHtml,
       skills: resumeContent.skills,
       experience,
       education: profileData.education,
