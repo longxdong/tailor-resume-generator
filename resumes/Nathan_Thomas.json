@@ -1,0 +1,44 @@
+{
+  "name": "Nathan Thomas",
+  "email": "nthomas5160@outlook.com",
+  "phone": "",
+  "location": "Fort Worth, TX",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Kiggla",
+      "location": "",
+      "start_date": "Oct 2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "OctoAI",
+      "location": "",
+      "start_date": "Sep 2020",
+      "end_date": "Oct 2025"
+    },
+    {
+      "company": "Google",
+      "location": "",
+      "start_date": "Mar 2017",
+      "end_date": "Sep 2020"
+    },
+    {
+      "company": "ClickHouse",
+      "location": "",
+      "start_date": "Oct 2014",
+      "end_date": "Mar 2017"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Texas Tech University",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "name": "George Kallis",
+  "email": "george.kallis@outlook.com",
+  "phone": "",
+  "location": "Nisou, Nicosia, Cyprus",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Kiggla",
+      "location": "",
+      "start_date": "Oct 2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "Mistral AI",
+      "location": "",
+      "start_date": "Jun 2019",
+      "end_date": "Oct 2025"
+    },
+    {
+      "company": "Elastic",
+      "location": "",
+      "start_date": "Jun 2015",
+      "end_date": "Jun 2019"
+    },
+    {
+      "company": "Hexagon Manufacturing Intelligence",
+      "location": "",
+      "start_date": "Jun 2014",
+      "end_date": "Apr 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "University of Manchester",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}

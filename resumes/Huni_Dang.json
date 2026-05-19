@@ -1,40 +1,40 @@
 {
-  "name": "Samuel Romero",
-  "email": "wolfcraft077@gmail.com",
+  "name": "Huni Dang",
+  "email": "huni.dang@outlook.com",
   "phone": "",
-  "location": "Arganda del Rey, Community of Madrid, Spain",
+  "location": "Budapest, Hungary",
   "linkedin": "",
   "website": "",
   "title": "",
   "experience": [
     {
-      "company": "DockYard, Inc.",
+      "company": "Kiggla",
       "location": "",
-      "start_date": "Jun 2025",
+      "start_date": "Sep 2025",
       "end_date": "Present"
     },
     {
-      "company": "GitLab",
+      "company": "Hexagon Manufacturing Intelligence",
       "location": "",
-      "start_date": "Apr 2020",
-      "end_date": "Jun 2025"
+      "start_date": "Jun 2019",
+      "end_date": "Aug 2025"
     },
     {
-      "company": "Canonical",
+      "company": "Progress Software",
       "location": "",
       "start_date": "Apr 2016",
-      "end_date": "Apr 2020"
+      "end_date": "Jun 2019"
     },
     {
-      "company": "Accenture",
+      "company": "GitHub",
       "location": "",
-      "start_date": "Mar 2015",
+      "start_date": "Jun 2015",
       "end_date": "Apr 2016"
     },
     {
-      "company": "Accenture",
+      "company": "GitHub",
       "location": "",
-      "start_date": "Apr 2014",
+      "start_date": "Feb 2014",
       "end_date": "Oct 2014"
     }
   ],
@@ -42,7 +42,7 @@
   "education": [
     {
       "degree": "Bachelor of Science in Computer Science",
-      "school": "University of Edinburgh",
+      "school": "Georgia Institute of Technology",
       "start_year": "2010",
       "end_year": "2014"
     }

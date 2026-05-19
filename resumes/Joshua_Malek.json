@@ -1,0 +1,44 @@
+{
+  "name": "Joshua Malek",
+  "email": "joshua.malek@outlook.com",
+  "phone": "",
+  "location": "Addison, TX",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Trianz",
+      "location": "",
+      "start_date": "Aug 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Modal",
+      "location": "",
+      "start_date": "Mar 2018",
+      "end_date": "Aug 2024"
+    },
+    {
+      "company": "Grafana Labs",
+      "location": "",
+      "start_date": "Aug 2015",
+      "end_date": "Mar 2018"
+    },
+    {
+      "company": "NVIDIA",
+      "location": "",
+      "start_date": "Mar 2014",
+      "end_date": "Oct 2014"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Georgia Institute of Technology",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}
