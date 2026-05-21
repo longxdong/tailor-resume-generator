@@ -1,0 +1,50 @@
+{
+  "name": "Samuel Allmon",
+  "email": "samuel.allmon.work@outlook.com",
+  "phone": "",
+  "location": "Austin, TX",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "SoftServe",
+      "location": "",
+      "start_date": "May 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "BrightOps",
+      "location": "",
+      "start_date": "Apr 2019",
+      "end_date": "May 2024"
+    },
+    {
+      "company": "OpenAI",
+      "location": "",
+      "start_date": "Aug 2017",
+      "end_date": "Apr 2019"
+    },
+    {
+      "company": "Progress Software",
+      "location": "",
+      "start_date": "Nov 2014",
+      "end_date": "Aug 2017"
+    },
+    {
+      "company": "NVIDIA",
+      "location": "",
+      "start_date": "Mar 2014",
+      "end_date": "Oct 2014"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "North Texas University",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}
