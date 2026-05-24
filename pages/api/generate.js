@@ -132,6 +132,99 @@ function sanitizeHistoricalTitle(title) {
   return t || "Software Engineer";
 }
 
+/** Parse a spine date string to a calendar year (Present → current year). */
+function parseJobYear(dateStr) {
+  if (!dateStr || typeof dateStr !== "string") return new Date().getFullYear();
+  if (/present/i.test(dateStr.trim())) return new Date().getFullYear();
+  const match = dateStr.match(/\b(19|20)\d{2}\b/);
+  return match ? parseInt(match[0], 10) : new Date().getFullYear();
+}
+
+/** Known first-release years (public GA). Do not cite a technology in a role whose end year is before this. */
+const TECH_RELEASE_YEAR = [
+  { patterns: [/\bNext\.?js\b/gi, /\bNextJS\b/gi], year: 2016, fallback: "ASP.NET MVC" },
+  { patterns: [/\bAngular\b(?!JS)/gi], year: 2016, fallback: "AngularJS 1.x" },
+  { patterns: [/\bReact(?:\.js|JS)?(?! Native)\b/gi], year: 2013, fallback: "jQuery and Backbone.js" },
+  { patterns: [/\bTypeScript\b/gi], year: 2012, fallback: "JavaScript" },
+  { patterns: [/\bVue\.?js\b/gi], year: 2014, fallback: "Knockout.js and jQuery" },
+  { patterns: [/\bDocker\b/gi], year: 2013, fallback: "VM-based deployments" },
+  { patterns: [/\bKubernetes\b/gi, /\bK8s\b/gi], year: 2014, fallback: "manual server provisioning" },
+  { patterns: [/\bAWS Lambda\b/gi], year: 2014, fallback: "cron jobs and application servers" },
+  { patterns: [/\bGraphQL\b/gi], year: 2015, fallback: "REST and SOAP services" },
+  { patterns: [/\bTerraform\b/gi], year: 2014, fallback: "manual infrastructure scripts" },
+  { patterns: [/\bIstio\b/gi], year: 2017, fallback: "load balancers and reverse proxies" },
+  { patterns: [/\bHelm\b/gi], year: 2016, fallback: "configuration management scripts" },
+  { patterns: [/\bServerless\b/gi], year: 2014, fallback: "hosted application servers" },
+  { patterns: [/\bGKE\b/gi, /\bGoogle Kubernetes Engine\b/gi], year: 2015, fallback: "Google Compute Engine VMs" },
+  { patterns: [/\bBigQuery\b/gi], year: 2011, fallback: "SQL Server and MySQL" },
+  { patterns: [/\bSnowflake\b/gi], year: 2014, fallback: "PostgreSQL and Redshift" },
+  { patterns: [/\bdbt\b/gi], year: 2016, fallback: "SQL scripts and ETL jobs" },
+];
+
+/** Modern / senior stack terms that should not dominate early-career or long-ago roles. */
+const LEGACY_ROLE_MODERN = [
+  { patterns: [/\bKubernetes\b/gi, /\bK8s\b/gi], fallback: "on-prem servers" },
+  { patterns: [/\bTerraform\b/gi], fallback: "shell scripts and runbooks" },
+  { patterns: [/\bGraphQL\b/gi], fallback: "REST APIs" },
+  { patterns: [/\bAWS Lambda\b/gi, /\bLambda functions\b/gi], fallback: "batch jobs" },
+  { patterns: [/\bmicroservices\b/gi], fallback: "monolithic applications" },
+  { patterns: [/\bDocker\b/gi], fallback: "VM deployments" },
+  { patterns: [/\bCI\/CD pipelines\b/gi], fallback: "build scripts and manual releases" },
+  { patterns: [/\bPrometheus\b/gi, /\bGrafana\b/gi], fallback: "log files and Nagios" },
+  { patterns: [/\bKafka\b/gi], fallback: "message queues and cron" },
+  { patterns: [/\bRedis\b/gi], fallback: "in-memory caching on application servers" },
+];
+
+function isLegacyExperienceRole(roleIndex, totalRoles, jobEndYear, title) {
+  if (/\b(intern|internship|junior|jr\.?|associate|entry[- ]level)\b/i.test(title || "")) return true;
+  if (jobEndYear < 2014) return true;
+  if (roleIndex >= 2 && jobEndYear < 2018) return true;
+  // Oldest row only when that stint ended in an clearly early era (not a recent second job on a 2-role resume)
+  if (totalRoles > 0 && roleIndex === totalRoles - 1 && jobEndYear < 2016) return true;
+  return false;
+}
+
+function replacePatterns(text, patterns, replacement) {
+  let out = text;
+  for (const pat of patterns) {
+    out = out.replace(pat, replacement);
+  }
+  return out;
+}
+
+/** Enforce period-accurate technology in one bullet (plain or **bold** text). */
+function sanitizeBulletTechTimeline(bullet, jobEndYear, roleIndex, totalRoles, title) {
+  if (typeof bullet !== "string" || !bullet.trim()) return bullet;
+  let b = bullet;
+
+  for (const { patterns, year, fallback } of TECH_RELEASE_YEAR) {
+    if (jobEndYear < year) {
+      b = replacePatterns(b, patterns, fallback);
+    }
+  }
+
+  if (isLegacyExperienceRole(roleIndex, totalRoles, jobEndYear, title)) {
+    for (const { patterns, fallback } of LEGACY_ROLE_MODERN) {
+      b = replacePatterns(b, patterns, fallback);
+    }
+  }
+
+  return b.replace(/\s{2,}/g, " ").trim();
+}
+
+function applyTechTimelineToExperience(experience) {
+  if (!Array.isArray(experience)) return;
+  const total = experience.length;
+  experience.forEach((exp, idx) => {
+    const endYear = parseJobYear(exp.end_date);
+    const title = exp.title || "";
+    if (!Array.isArray(exp.details)) return;
+    exp.details = exp.details.map((d) =>
+      sanitizeBulletTechTimeline(d, endYear, idx, total, title)
+    );
+  });
+}
+
 // Call GPT with timeout & retries
 async function callGPT(promptOrMessages, model = null, maxTokens = 80000, retries = 2, timeoutMs = 180000) {
   const resolvedModel = model || process.env.OPENAI_MODEL || "gpt-5-mini";
@@ -280,7 +373,24 @@ EXPERIENCE BULLETS:
 - At least 75% of bullets across the resume should include a measurable outcome (%, latency, throughput, time saved, scale, ticket volume, team size, etc.). Use plausible, modest numbers; avoid absurd claims.
 - Gold-pattern example: "Reduced API response time by 40% by implementing **Redis** caching and query optimization in **SQL Server** for multi-tenant SaaS service."
 - Where the JD implies full-stack or platform work, include explicit front-end collaboration in at least one bullet per recent role (e.g. partnered with front-end teams on API contracts, UI integration, design reviews).
-- Weave optional JD tech into bullets when relevant to that role's timeframe.
+- Put the densest JD/modern stack in experience[0] and recent rows. Do NOT copy the full modern JD stack into every historical job.
+
+TECHNOLOGY TIMELINE (CRITICAL — NON-NEGOTIABLE):
+- Before writing bullets for EACH role, read that row's start_date and end_date. Every **bold** or plain technology in that role's bullets MUST have existed and been realistically used during that employment period (use the role's end year as the cutoff).
+- NEVER cite a framework/tool in a job that ended before that technology's public release. Reference release years (verify mentally before output):
+  • Angular (2+): 2016 — NOT in roles ending before 2016
+  • React: 2013 — NOT before 2013
+  • TypeScript: 2012 — NOT before 2012
+  • Vue.js: 2014 — NOT before 2014
+  • Next.js: 2016 — NOT before 2016
+  • Docker: 2013 — NOT before 2013
+  • Kubernetes / K8s: 2014 — NOT before 2014
+  • AWS Lambda: 2014 — NOT before 2014
+  • GraphQL: 2015 — NOT before 2015
+  • Terraform: 2014 — NOT before 2014
+- If unsure about release timing, use generic or period-appropriate alternatives instead of modern names (pre-2013 frontend: jQuery, Backbone.js, AngularJS 1.x; pre-2013 backend: PHP, Java, .NET, Ruby on Rails; pre-2014 infra: on-prem VMs, FTP/cron, manual deploys).
+- LEGACY / JUNIOR / OLDEST ROLES (titles with Intern/Junior/Associate, roles ending before 2014, third-or-later rows ending before 2018, OR the oldest row when it ended before 2016): bullets MUST use simpler, era-appropriate stacks only — monoliths, SQL, SVN/CVS, on-prem servers, basic scripting, jQuery-era frontend, Java/.NET/PHP, manual releases. Do NOT put Kubernetes, Terraform, GraphQL, Lambda/serverless, Next.js, or other modern senior/platform tooling in those rows even if the JD mentions them.
+- experience[0] (most recent): full JD-aligned modern stack is allowed when dates support it.
 
 CONSISTENCY:
 - Use the same date format as the spine (e.g. "Aug 2024 – Present"). Use an en-dash surrounded by spaces between dates in display strings if you output a combined range in text; in JSON use separate start_date and end_date fields exactly as in the spine.
@@ -298,6 +408,7 @@ Here is the target job description:
 
 FINAL CHECK:
 - Root "title" and experience[0].title both start with "Senior" and contain no Lead/Staff/Principal/mid-level markers.
+- For EVERY experience row: re-check start_date/end_date — no anachronistic tech; oldest/intern/junior rows use simple period-appropriate tools only.
 - summary is an array of 4–6 bullets; skills ordered JD-first; most experience bullets have metrics; spine companies/dates unchanged.
 - Every title is plain (no technology suffix).
 
@@ -439,9 +550,6 @@ Order experience most recent first (same order as spine).`;
 
     if (Array.isArray(resumeContent.experience)) {
       resumeContent.experience.forEach((exp, idx) => {
-        if (Array.isArray(exp.details)) {
-          exp.details = exp.details.map((d) => boldToStrong(normalizeTextDashes(d)));
-        }
         if (typeof exp.title === "string") {
           exp.title = idx === 0 ? enforceSeniorTitle(exp.title) : sanitizeHistoricalTitle(exp.title);
         }
@@ -530,6 +638,14 @@ Order experience most recent first (same order as spine).`;
             end_date: normalizeDateDisplay(e.end_date),
             details: Array.isArray(e.details) ? e.details : [],
           }));
+
+    // Timeline rules use authoritative spine dates; then convert markdown bold to HTML
+    applyTechTimelineToExperience(experience);
+    experience.forEach((exp) => {
+      if (Array.isArray(exp.details)) {
+        exp.details = exp.details.map((d) => boldToStrong(normalizeTextDashes(d)));
+      }
+    });
 
     const templateData = {
       name: profileData.name,
