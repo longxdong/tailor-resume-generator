@@ -1,0 +1,50 @@
+{
+  "name": "Richard Taylor",
+  "email": "richard.taylor723@outlook.com",
+  "phone": "",
+  "location": "Azle, Texas",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Kiggla",
+      "location": "",
+      "start_date": "Nov 2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "Slalom",
+      "location": "",
+      "start_date": "Jul 2020",
+      "end_date": "Nov 2025"
+    },
+    {
+      "company": "Google",
+      "location": "",
+      "start_date": "Mar 2017",
+      "end_date": "Jul 2020"
+    },
+    {
+      "company": "Amazon",
+      "location": "",
+      "start_date": "Jan 2015",
+      "end_date": "Mar 2017"
+    },
+    {
+      "company": "Amazon",
+      "location": "",
+      "start_date": "Mar 2014",
+      "end_date": "Dec 2014"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Texas Tech University",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}
