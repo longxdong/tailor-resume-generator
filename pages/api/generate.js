@@ -62,6 +62,76 @@ function sanitizeJobTitle(title) {
   return t.trim();
 }
 
+/** Map stripped/vague title text to a standard IC role family before adding Senior. */
+function inferRoleFamily(text) {
+  const t = text.trim();
+  if (!t) return "Software Engineer";
+  const lower = t.toLowerCase();
+
+  if (/\b(security engineer|software engineer|backend engineer|frontend engineer|full stack engineer|devops engineer|data engineer|cloud engineer|platform engineer|technical architect|software architect|solutions architect|systems engineer)\b/i.test(t)) {
+    return t;
+  }
+  if (/security/.test(lower)) return "Security Engineer";
+  if (/backend/.test(lower)) return "Backend Engineer";
+  if (/frontend|front-end/.test(lower)) return "Frontend Engineer";
+  if (/full[- ]?stack/.test(lower)) return "Full Stack Engineer";
+  if (/devops|sre|reliability/.test(lower)) return "DevOps Engineer";
+  if (/architect/.test(lower)) return "Technical Architect";
+  if (/data/.test(lower)) return "Data Engineer";
+  if (/platform/.test(lower)) return "Platform Engineer";
+  if (/cloud|infrastructure/.test(lower)) return "Cloud Engineer";
+  if (/\bengineering\b/.test(lower) && !/\bengineer\b/.test(lower)) return "Software Engineer";
+  if (/\b(technical|team)\b/.test(lower) && !/\b(engineer|developer|architect)\b/.test(lower)) return "Software Engineer";
+  if (/\b(engineer|developer|architect|analyst|specialist|administrator|consultant|programmer)\b/.test(lower)) return t;
+
+  return "Software Engineer";
+}
+
+/**
+ * Headline + most recent role must read as Senior IC level.
+ * Strips Lead / Staff / Principal / management / mid-level markers; ensures "Senior" prefix.
+ */
+function enforceSeniorTitle(title) {
+  let t = sanitizeJobTitle(title);
+  if (!t) return "Senior Software Engineer";
+
+  t = t
+    .replace(
+      /\b(staff|principal|distinguished|lead|leading|intern|internship|junior|jr\.?|associate|entry[- ]level|director|manager|head|vp|vice president|chief)\b/gi,
+      " "
+    )
+    .replace(/\s+(i{1,3}|iv|v|vi{0,3}|1|2|3|4|5)\b/gi, "")
+    .replace(/\blevel\s+[1-5]\b/gi, "")
+    .replace(/^\s*of\s+/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  t = t.replace(/^sr\.?\s+/i, "").replace(/^senior\s+/i, "").trim();
+  t = inferRoleFamily(t);
+
+  const result = `Senior ${t}`.replace(/\s+/g, " ");
+  return result.replace(/^Senior Senior\s+/i, "Senior ");
+}
+
+/** Older roles: no Lead/Staff/Principal/management; may remain mid-level; drop Senior prefix for progression. */
+function sanitizeHistoricalTitle(title) {
+  let t = sanitizeJobTitle(title);
+  t = t
+    .replace(
+      /\b(staff|principal|distinguished|lead|leading|director|manager|head|vp|vice president|chief)\b/gi,
+      " "
+    )
+    .replace(/\s+(i{1,3}|iv|v|vi{0,3}|1|2|3|4|5)\b/gi, "")
+    .replace(/\blevel\s+[1-5]\b/gi, "")
+    .replace(/^sr\.?\s+/i, "")
+    .replace(/^senior\s+/i, "")
+    .replace(/^\s*of\s+/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  t = inferRoleFamily(t);
+  return t || "Software Engineer";
+}
+
 // Call GPT with timeout & retries
 async function callGPT(promptOrMessages, model = null, maxTokens = 80000, retries = 2, timeoutMs = 180000) {
   const resolvedModel = model || process.env.OPENAI_MODEL || "gpt-5-mini";
@@ -184,9 +254,14 @@ INPUT RULES (CRITICAL):
 - Generate summary, skills, job titles, and experience bullets from the JD (not from a prior resume narrative). Stay broadly plausible per employer and dates.
 
 JD ALIGNMENT:
-- Root "title" = primary target role from the JD in plain form (e.g. "Senior Software Engineer", "Technical Architect"). No " at Company".
-- JOB TITLE FORMAT (CRITICAL): Use short, standard corporate titles only (typically 2–5 words: seniority + role family). NEVER append technologies, stacks, or JD keywords after dashes, colons, pipes, or parentheses. WRONG: "Senior Software Engineer - C#", "Technical Architect – .NET Core & Angular". RIGHT: "Senior Software Engineer", "Technical Architect". Put all tech in skills and bullets, not in title strings.
-- Each experience[].title: same job family as the JD; show seniority progression (more junior earlier, closest to JD level on most recent role). Titles must not all be identical; still no tech/stack suffixes on any title.
+- Root "title" (resume headline under the candidate name) and experience[0].title (MOST RECENT job, first row after sorting most-recent-first) MUST both be Senior-level titles. This rule overrides the JD posting title when the JD says Lead, Staff, Principal, Architect-without-Senior, or any mid-level title.
+- SENIORITY OVERRIDE (CRITICAL — NON-NEGOTIABLE):
+  • Root "title" and experience[0].title MUST use the word "Senior" (e.g. "Senior Software Engineer", "Senior Backend Engineer", "Senior Security Engineer", "Senior Technical Architect").
+  • NEVER use on root "title" or experience[0].title: Lead, Staff, Principal, Distinguished, Head, Director, Manager, VP, Intern, Junior, Associate, Entry Level, or roman/numeric levels (II, III, Level 2, etc.).
+  • If the JD title is "Lead Software Engineer", "Software Engineer", "Staff Engineer", "Principal Engineer", "Backend Engineer II", etc., map the role family from the JD but output Senior + role family on root "title" and experience[0].title only (e.g. JD "Lead Backend Engineer" → "Senior Backend Engineer"; JD "Software Engineer" → "Senior Software Engineer"; JD "Principal Security Engineer" → "Senior Security Engineer").
+  • Bullets, skills, and summary may still reflect JD duties (including lead/principal scope) even though the displayed title says Senior.
+- JOB TITLE FORMAT: Short standard corporate titles only (2–5 words). No tech stacks after dashes/colons/parentheses. WRONG: "Senior Software Engineer - C#". RIGHT: "Senior Software Engineer".
+- experience[1] onward (older roles): same JD job family; show realistic progression (mid-level or junior titles allowed on older rows only). Never Staff/Principal/Lead on any row. No tech suffixes on any title.
 
 SUMMARY (bullet format):
 - Return "summary" as a JSON array of 4–6 strings (each string is one summary bullet, not a paragraph).
@@ -222,12 +297,13 @@ Here is the target job description:
 \${jobDescription}
 
 FINAL CHECK:
-- summary is an array of 4–6 bullets; skills ordered JD-first; most experience bullets have metrics; recent roles mention front-end collaboration when JD fits; spine companies/dates unchanged.
-- Every title field is a plain role name with no technology suffix (no " - C#", no " – .NET", no parenthetical stack).
+- Root "title" and experience[0].title both start with "Senior" and contain no Lead/Staff/Principal/mid-level markers.
+- summary is an array of 4–6 bullets; skills ordered JD-first; most experience bullets have metrics; spine companies/dates unchanged.
+- Every title is plain (no technology suffix).
 
 OUTPUT: Return a single JSON object only (no markdown fences, no commentary):
 
-{"title":"<plain JD role e.g. Senior Software Engineer>","summary":["<bullet 1 with **bold**>","<bullet 2>",...],"skills":{"<CategoryName>":["<JD keyword first>",...],...},"experience":[{"title":"<plain role e.g. Software Engineer>","company":"<exact from spine>","location":"","start_date":"<exact from spine>","end_date":"<exact from spine>","details":["<bullet with metric + **bold** tech>",...]}]}
+{"title":"<Senior + JD role family e.g. Senior Software Engineer>","summary":["<bullet 1 with **bold**>","<bullet 2>",...],"skills":{"<CategoryName>":["<JD keyword first>",...],...},"experience":[{"title":"<Senior + role for MOST RECENT row only>","company":"<exact from spine>","location":"","start_date":"<exact from spine>","end_date":"<exact from spine>","details":["<bullet>",...]},{"title":"<older row may be mid-level e.g. Software Engineer>",...}]}
 
 Order experience most recent first (same order as spine).`;
 
@@ -343,7 +419,7 @@ Order experience most recent first (same order as spine).`;
     }
 
     if (typeof resumeContent.title === "string") {
-      resumeContent.title = sanitizeJobTitle(resumeContent.title);
+      resumeContent.title = enforceSeniorTitle(resumeContent.title);
     }
 
     // Convert **bold** to <strong> for HTML template
@@ -362,11 +438,13 @@ Order experience most recent first (same order as spine).`;
     const summaryHtml = formatSummaryHtml(resumeContent.summary, boldToStrong);
 
     if (Array.isArray(resumeContent.experience)) {
-      resumeContent.experience.forEach((exp) => {
+      resumeContent.experience.forEach((exp, idx) => {
         if (Array.isArray(exp.details)) {
           exp.details = exp.details.map((d) => boldToStrong(normalizeTextDashes(d)));
         }
-        if (typeof exp.title === "string") exp.title = sanitizeJobTitle(exp.title);
+        if (typeof exp.title === "string") {
+          exp.title = idx === 0 ? enforceSeniorTitle(exp.title) : sanitizeHistoricalTitle(exp.title);
+        }
       });
     }
 
@@ -433,15 +511,19 @@ Order experience most recent first (same order as spine).`;
     const experience =
       spine.length > 0 && aiExp.length === spine.length
         ? spine.map((job, idx) => ({
-            title: sanitizeJobTitle(aiExp[idx]?.title || "Engineer"),
+            title: idx === 0
+              ? enforceSeniorTitle(aiExp[idx]?.title || "Engineer")
+              : sanitizeHistoricalTitle(aiExp[idx]?.title || "Engineer"),
             company: job.company,
             location: job.location && String(job.location).trim() ? job.location : "",
             start_date: normalizeDateDisplay(job.start_date),
             end_date: normalizeDateDisplay(job.end_date),
             details: Array.isArray(aiExp[idx]?.details) ? aiExp[idx].details : [],
           }))
-        : aiExp.map((e) => ({
-            title: sanitizeJobTitle(e.title || "Engineer"),
+        : aiExp.map((e, idx) => ({
+            title: idx === 0
+              ? enforceSeniorTitle(e.title || "Engineer")
+              : sanitizeHistoricalTitle(e.title || "Engineer"),
             company: e.company,
             location: e.location && String(e.location).trim() ? e.location : "",
             start_date: normalizeDateDisplay(e.start_date),
@@ -451,7 +533,7 @@ Order experience most recent first (same order as spine).`;
 
     const templateData = {
       name: profileData.name,
-      title: typeof resumeContent.title === "string" ? sanitizeJobTitle(resumeContent.title) : "",
+      title: typeof resumeContent.title === "string" ? enforceSeniorTitle(resumeContent.title) : "",
       email: profileData.email,
       phone: profileData.phone,
       location: profileData.location,
