@@ -1,0 +1,50 @@
+{
+  "name": "Brian Hitchcock",
+  "email": "brian.hitchcock51@outlook.com",
+  "phone": "",
+  "location": "Tionesta, Pennsylvania",
+  "linkedin": "https://www.linkedin.com/in/brian-hitchcock-b6aba420/",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Vermeer Mid Atlantic, LLC",
+      "location": "",
+      "start_date": "Aug 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Lenovo",
+      "location": "",
+      "start_date": "Jul 2020",
+      "end_date": "Aug 2024"
+    },
+    {
+      "company": "West Monroe",
+      "location": "",
+      "start_date": "May 2018",
+      "end_date": "Jul 2020"
+    },
+    {
+      "company": "NVIDIA",
+      "location": "",
+      "start_date": "Jul 2016",
+      "end_date": "May 2018"
+    },
+    {
+      "company": "Hexagon AB",
+      "location": "",
+      "start_date": "May 2015",
+      "end_date": "Jun 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Indiana University of Pennsylvania",
+      "start_year": "2011",
+      "end_year": "2015"
+    }
+  ]
+}
