@@ -1,0 +1,44 @@
+{
+  "name": "Tanner Green",
+  "email": "tanner.green826@outlook.com",
+  "phone": "",
+  "location": "Austin, TX",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "EPAM Systems",
+      "location": "",
+      "start_date": "Aug 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Lenovo",
+      "location": "",
+      "start_date": "Apr 2021",
+      "end_date": "Aug 2024"
+    },
+    {
+      "company": "Nordstrom",
+      "location": "",
+      "start_date": "Apr 2015",
+      "end_date": "Apr 2021"
+    },
+    {
+      "company": "Microsoft",
+      "location": "",
+      "start_date": "May 2014",
+      "end_date": "Mar 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Texas Tech University",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}
