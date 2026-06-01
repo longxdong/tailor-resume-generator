@@ -1,0 +1,44 @@
+{
+  "name": "Cristian Glass",
+  "email": "cristian.glass@outlook.com",
+  "phone": "",
+  "location": "Braşov, Braşov, Romania",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Lenovo",
+      "location": "",
+      "start_date": "Oct 2021",
+      "end_date": "Present"
+    },
+    {
+      "company": "Amazon",
+      "location": "",
+      "start_date": "Jun 2017",
+      "end_date": "Oct 2021"
+    },
+    {
+      "company": "Accenture",
+      "location": "",
+      "start_date": "May 2015",
+      "end_date": "Jun 2017"
+    },
+    {
+      "company": "Google",
+      "location": "",
+      "start_date": "Apr 2014",
+      "end_date": "Nov 2014"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Boston University",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}
