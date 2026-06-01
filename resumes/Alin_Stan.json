@@ -1,0 +1,44 @@
+{
+  "name": "Alin Stan",
+  "email": "alin.stan1@outlook.com",
+  "phone": "",
+  "location": "Brașov, Romania",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Lenovo",
+      "location": "",
+      "start_date": "Sep 2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "Kinguin",
+      "location": "",
+      "start_date": "May 2017",
+      "end_date": "Sep 2023"
+    },
+    {
+      "company": "Amazon",
+      "location": "",
+      "start_date": "Jun 2016",
+      "end_date": "May 2017"
+    },
+    {
+      "company": "Accenture",
+      "location": "",
+      "start_date": "Nov 2014",
+      "end_date": "Jun 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Cornell University",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}
