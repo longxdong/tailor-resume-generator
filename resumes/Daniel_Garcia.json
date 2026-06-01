@@ -1,0 +1,44 @@
+{
+  "name": "Daniel Garcia",
+  "email": "daniel.garcia251@gmail.com",
+  "phone": "",
+  "location": "Houston, TX",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "AllCloud",
+      "location": "",
+      "start_date": "Aug 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "BrightOps",
+      "location": "",
+      "start_date": "Jul 2020",
+      "end_date": "Aug 2024"
+    },
+    {
+      "company": "Lenovo",
+      "location": "",
+      "start_date": "May 2016",
+      "end_date": "Jul 2020"
+    },
+    {
+      "company": "Accenture",
+      "location": "",
+      "start_date": "Nov 2014",
+      "end_date": "May 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "University of North Texas",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}
