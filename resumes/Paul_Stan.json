@@ -1,0 +1,45 @@
+{
+  "name": "Paul Stan",
+  "email": "paul.stan20@outlook.com",
+  "title": "",
+  "phone": "",
+  "location": "Brasov, Romania",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Leidos",
+      "location": "",
+      "start_date": "Sep 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Kinguin",
+      "location": "",
+      "start_date": "Jul 2019",
+      "end_date": "Sep 2024"
+    },
+    {
+      "company": "Nordstrom",
+      "location": "",
+      "start_date": "Aug 2017",
+      "end_date": "Jul 2019"
+    },
+    {
+      "company": "Progress Software",
+      "location": "",
+      "start_date": "Oct 2016",
+      "end_date": "Jun 2017"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Vietnam National University, Hanoi",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
