@@ -362,10 +362,14 @@ SUMMARY (bullet format):
 - Include optional JD technologies when relevant (e.g. Vue3, MAUI/Xamarin, BI/ML, HTML5/CSS3, Python/Django) even if secondary to core stack.
 - If the candidate has more than 10 years of experience, say only "more than 10 years" or "over 10 years" in summary text, never an exact count like 14 years.
 
-TECHNICAL SKILLS:
-- Mirror JD categories and vocabulary. In each category array, list highest-value JD keywords FIRST, then related tools.
-- Include JD-required skills first; add optional/adjacent skills from the JD when plausible (Vue3, MAUI, Xamarin, BI, ML, HTML5, CSS3, Python, Django, etc.).
-- Roughly 6–14 items per category when justified; omit empty categories.
+TECHNICAL SKILLS (CRITICAL — DENSE SENIOR-LEVEL SECTION):
+- The skills section represents CURRENT capabilities of a seasoned senior engineer in the JD's role family. It is NOT limited to words copied from the JD. Skills are NOT bound by per-job technology timeline rules (those apply to experience bullets only).
+- Structure: use 6–10 categories tailored to the JD (e.g. Languages, Backend, Frontend, Cloud & Infrastructure, Databases, Data & Messaging, DevOps & CI/CD, Security, Testing & Observability, Tools & Methodologies — adapt labels to the role).
+- ORDER within each category: (1) highest-priority JD keywords first, (2) then expand with the full realistic ecosystem a senior engineer in this role would know from years of practice.
+- DENSITY (HARD): Each category MUST contain at least 12 skills (target 14–22 when credible). If a category would have fewer than 12, expand with adjacent tools, libraries, protocols, cloud services, and practices common to that stack until the minimum is met.
+- EXPANSION RULES: After JD terms, add related senior-level ecosystem items even if absent from the JD — e.g. for backend/security/cloud roles: REST, GraphQL, gRPC, OAuth2/JWT, Docker, Kubernetes, Terraform, CI/CD (GitHub Actions, Jenkins), monitoring (Prometheus, Grafana), logging, SQL/NoSQL variants, message queues (Kafka, Pub/Sub), Agile/Scrum, code review, system design. For frontend-heavy roles add HTML5, CSS3, webpack, testing libraries, etc. Stay plausible for the role family; do not invent niche tools with no connection.
+- Avoid exact duplicates across categories; slight variants OK (e.g. Docker and Containerization in different sections). No filler words — every item must be a real technology, tool, platform, or methodology.
+- This section should dominate ATS keyword coverage: comprehensive, detailed, and what a real experienced senior engineer's resume would list.
 
 EXPERIENCE BULLETS:
 - Approximately 4–8 bullets per role (fewer for short internships).
@@ -409,12 +413,13 @@ Here is the target job description:
 FINAL CHECK:
 - Root "title" and experience[0].title both start with "Senior" and contain no Lead/Staff/Principal/mid-level markers.
 - For EVERY experience row: re-check start_date/end_date — no anachronistic tech; oldest/intern/junior rows use simple period-appropriate tools only.
-- summary is an array of 4–6 bullets; skills ordered JD-first; most experience bullets have metrics; spine companies/dates unchanged.
+- skills: 6–10 categories; EVERY category has at least 12 items; JD keywords first in each list; section reads like a senior engineer's full stack, not a short JD paste.
+- summary is an array of 4–6 bullets; most experience bullets have metrics; spine companies/dates unchanged.
 - Every title is plain (no technology suffix).
 
 OUTPUT: Return a single JSON object only (no markdown fences, no commentary):
 
-{"title":"<Senior + JD role family e.g. Senior Software Engineer>","summary":["<bullet 1 with **bold**>","<bullet 2>",...],"skills":{"<CategoryName>":["<JD keyword first>",...],...},"experience":[{"title":"<Senior + role for MOST RECENT row only>","company":"<exact from spine>","location":"","start_date":"<exact from spine>","end_date":"<exact from spine>","details":["<bullet>",...]},{"title":"<older row may be mid-level e.g. Software Engineer>",...}]}
+{"title":"<Senior + JD role family e.g. Senior Software Engineer>","summary":["<bullet 1 with **bold**>","<bullet 2>",...],"skills":{"<CategoryName>":["<JD keyword first>", "<12-22 total per category>",...],...},"experience":[{"title":"<Senior + role for MOST RECENT row only>","company":"<exact from spine>","location":"","start_date":"<exact from spine>","end_date":"<exact from spine>","details":["<bullet>",...]},{"title":"<older row may be mid-level e.g. Software Engineer>",...}]}
 
 Order experience most recent first (same order as spine).`;
 
@@ -441,7 +446,8 @@ Order experience most recent first (same order as spine).`;
       const concisePrompt = prompt
         .replace(/4–6 strings/g, "3–4 strings")
         .replace(/Approximately 4–8 bullets per role/g, "Approximately 3–5 bullets per role")
-        .replace(/roughly 6–14 items per category/g, "roughly 5–9 items per category")
+        .replace(/at least 12 skills \(target 14–22/g, "at least 10 skills (target 12–16")
+        .replace(/6–10 categories/g, "5–8 categories")
         .replace(/At least 75% of bullets/g, "At least 60% of bullets");
 
       const retryResponse = await callGPT(concisePrompt, null, 10000);
@@ -570,6 +576,22 @@ Order experience most recent first (same order as spine).`;
         skillsClean[cleanKey || key] = items;
       }
       resumeContent.skills = skillsClean;
+
+      const skillCategoryCounts = Object.entries(skillsClean).map(([k, v]) => ({
+        category: k,
+        count: Array.isArray(v) ? v.length : 0,
+      }));
+      const thinCategories = skillCategoryCounts.filter((c) => c.count > 0 && c.count < 12);
+      if (thinCategories.length > 0) {
+        console.warn(
+          "Skills categories below 12 items:",
+          thinCategories.map((c) => `${c.category}(${c.count})`).join(", ")
+        );
+      }
+      console.log(
+        "Skills per category:",
+        skillCategoryCounts.map((c) => `${c.category}: ${c.count}`).join("; ")
+      );
     }
 
     console.log("✅ AI content generated successfully");
