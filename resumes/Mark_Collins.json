@@ -1,0 +1,38 @@
+{
+  "name": "Mark Collins",
+  "email": "mark.collins32@outlook.com",
+  "phone": "",
+  "location": "",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Lenovo",
+      "location": "",
+      "start_date": "Mar 2025",
+      "end_date": "Present"
+    },
+    {
+      "company": "Hexagon AB",
+      "location": "",
+      "start_date": "Aug 2020",
+      "end_date": "Mar 2025"
+    },
+    {
+      "company": "AQMetrics",
+      "location": "",
+      "start_date": "Sep 2017",
+      "end_date": "Aug 2020"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Singapore Institute of Technology",
+      "start_year": "2013",
+      "end_year": "2017"
+    }
+  ]
+}
