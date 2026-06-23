@@ -1,0 +1,38 @@
+{
+  "name": "Mark Healy",
+  "email": "mark.healy@outlook.ie",
+  "phone": "",
+  "location": "Dublin, Ireland",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "ABFinance",
+      "location": "",
+      "start_date": "Jan 2026",
+      "end_date": "Present"
+    },
+    {
+      "company": "Hexagon Manufacturing Intelligence",
+      "location": "",
+      "start_date": "Jun 2020",
+      "end_date": "Jan 2026"
+    },
+    {
+      "company": "Accenture",
+      "location": "",
+      "start_date": "May 2017",
+      "end_date": "Jun 2020"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Hanoi University of Science and Technology",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
