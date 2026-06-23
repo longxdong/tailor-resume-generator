@@ -1,0 +1,38 @@
+{
+  "name": "Thomas Howard",
+  "email": "thomas.howard451@outlook.com",
+  "phone": "",
+  "location": "",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Nordstrom",
+      "location": "",
+      "start_date": "Jan 2026",
+      "end_date": "Present"
+    },
+    {
+      "company": "Progress Software",
+      "location": "",
+      "start_date": "Sep 2020",
+      "end_date": "Jan 2026"
+    },
+    {
+      "company": "Revolut",
+      "location": "",
+      "start_date": "Jun 2017",
+      "end_date": "Sep 2020"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "National University of Singapore",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
