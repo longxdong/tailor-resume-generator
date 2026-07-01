@@ -5,8 +5,22 @@ import OpenAI from "openai";
 import fs from "fs";
 import path from "path";
 import Handlebars from "handlebars";
+import {
+  buildOpenAiUserPrompt,
+  OPENAI_SYSTEM_PROMPT,
+  OPENAI_SYSTEM_PROMPT_RETRY,
+} from "../../lib/resume-prompt-sections";
+import { enforceSeniorTitle, sanitizeHistoricalTitle } from "../../lib/job-titles";
+import {
+  assessJdEligibility,
+  FEDERAL_CLEARANCE_MESSAGE,
+} from "../../lib/jd-eligibility";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+/** Default max completion tokens for resume JSON (full resume fits well under this). */
+const OPENAI_MAX_COMPLETION_TOKENS = 16000;
+const OPENAI_RETRY_MAX_TOKENS = 12000;
 
 /** Normalize dashes and whitespace for consistent PDF output */
 function normalizeTextDashes(text) {
@@ -48,88 +62,6 @@ function capYearsInText(text) {
   return text
     .replace(/\b(1[2-9]|[2-9]\d|\d{3})\s*\+\s*years?\b/gi, "more than 10 years")
     .replace(/\b(1[2-9]|[2-9]\d|\d{3})\s*years?\b/gi, "more than 10 years");
-}
-
-/** Standard corporate job title only — no stack, JD keywords, or tech after dashes/colons */
-function sanitizeJobTitle(title) {
-  if (typeof title !== "string") return title;
-  let t = title.trim().replace(/\s+/g, " ");
-  t = t.replace(/\s+at\s+.*$/i, "");
-  t = t.replace(/\s*\([^)]*\)\s*$/, "");
-  t = t.replace(/\s*[|:]\s+.*$/, "");
-  t = t.replace(/\s+[–—]\s+.*$/, "");
-  t = t.replace(/\s+-\s+.*$/, "");
-  return t.trim();
-}
-
-/** Map stripped/vague title text to a standard IC role family before adding Senior. */
-function inferRoleFamily(text) {
-  const t = text.trim();
-  if (!t) return "Software Engineer";
-  const lower = t.toLowerCase();
-
-  if (/\b(security engineer|software engineer|backend engineer|frontend engineer|full stack engineer|devops engineer|data engineer|cloud engineer|platform engineer|technical architect|software architect|solutions architect|systems engineer)\b/i.test(t)) {
-    return t;
-  }
-  if (/security/.test(lower)) return "Security Engineer";
-  if (/backend/.test(lower)) return "Backend Engineer";
-  if (/frontend|front-end/.test(lower)) return "Frontend Engineer";
-  if (/full[- ]?stack/.test(lower)) return "Full Stack Engineer";
-  if (/devops|sre|reliability/.test(lower)) return "DevOps Engineer";
-  if (/architect/.test(lower)) return "Technical Architect";
-  if (/data/.test(lower)) return "Data Engineer";
-  if (/platform/.test(lower)) return "Platform Engineer";
-  if (/cloud|infrastructure/.test(lower)) return "Cloud Engineer";
-  if (/\bengineering\b/.test(lower) && !/\bengineer\b/.test(lower)) return "Software Engineer";
-  if (/\b(technical|team)\b/.test(lower) && !/\b(engineer|developer|architect)\b/.test(lower)) return "Software Engineer";
-  if (/\b(engineer|developer|architect|analyst|specialist|administrator|consultant|programmer)\b/.test(lower)) return t;
-
-  return "Software Engineer";
-}
-
-/**
- * Headline + most recent role must read as Senior IC level.
- * Strips Lead / Staff / Principal / management / mid-level markers; ensures "Senior" prefix.
- */
-function enforceSeniorTitle(title) {
-  let t = sanitizeJobTitle(title);
-  if (!t) return "Senior Software Engineer";
-
-  t = t
-    .replace(
-      /\b(staff|principal|distinguished|lead|leading|intern|internship|junior|jr\.?|associate|entry[- ]level|director|manager|head|vp|vice president|chief)\b/gi,
-      " "
-    )
-    .replace(/\s+(i{1,3}|iv|v|vi{0,3}|1|2|3|4|5)\b/gi, "")
-    .replace(/\blevel\s+[1-5]\b/gi, "")
-    .replace(/^\s*of\s+/i, "")
-    .replace(/\s+/g, " ")
-    .trim();
-
-  t = t.replace(/^sr\.?\s+/i, "").replace(/^senior\s+/i, "").trim();
-  t = inferRoleFamily(t);
-
-  const result = `Senior ${t}`.replace(/\s+/g, " ");
-  return result.replace(/^Senior Senior\s+/i, "Senior ");
-}
-
-/** Older roles: no Lead/Staff/Principal/management; may remain mid-level; drop Senior prefix for progression. */
-function sanitizeHistoricalTitle(title) {
-  let t = sanitizeJobTitle(title);
-  t = t
-    .replace(
-      /\b(staff|principal|distinguished|lead|leading|director|manager|head|vp|vice president|chief)\b/gi,
-      " "
-    )
-    .replace(/\s+(i{1,3}|iv|v|vi{0,3}|1|2|3|4|5)\b/gi, "")
-    .replace(/\blevel\s+[1-5]\b/gi, "")
-    .replace(/^sr\.?\s+/i, "")
-    .replace(/^senior\s+/i, "")
-    .replace(/^\s*of\s+/i, "")
-    .replace(/\s+/g, " ")
-    .trim();
-  t = inferRoleFamily(t);
-  return t || "Software Engineer";
 }
 
 /** Parse a spine date string to a calendar year (Present → current year). */
@@ -226,7 +158,7 @@ function applyTechTimelineToExperience(experience) {
 }
 
 // Call GPT with timeout & retries
-async function callGPT(promptOrMessages, model = null, maxTokens = 80000, retries = 2, timeoutMs = 180000) {
+async function callGPT(promptOrMessages, model = null, maxTokens = OPENAI_MAX_COMPLETION_TOKENS, retries = 2, timeoutMs = 180000) {
   const resolvedModel = model || process.env.OPENAI_MODEL || "gpt-5-mini";
   while (retries > 0) {
     try {
@@ -269,6 +201,12 @@ export default async function handler(req, res) {
 
     if (!profile) return res.status(400).send("Profile required");
     if (!jd) return res.status(400).send("Job description required");
+
+    const eligibility = await assessJdEligibility(openai, jd, [companyName, jobTitle], callGPT);
+    if (eligibility.block) {
+      console.log(`JD blocked (${eligibility.source || "unknown"}): federal/clearance posting`);
+      return res.status(400).send(FEDERAL_CLEARANCE_MESSAGE);
+    }
     
     // Default to Resume.html if no template specified
     const templateName = template || "Resume-Professional-Sans";
@@ -339,95 +277,18 @@ export default async function handler(req, res) {
       ...employmentSpine.map((line) => `- ${line}`),
     ].join("\n");
 
-    const resumePromptTemplate = `You are an expert resume writer producing offer-worthy, ATS-optimized resumes aligned to the Job Description (JD).
+    const userPrompt = buildOpenAiUserPrompt(
+      candidateContext,
+      jd,
+      yearsOfExperience > 10
+    );
 
-INPUT RULES (CRITICAL):
-- "CANDIDATE PERSONAL" and "EDUCATION" are the only authoritative biographical facts from the candidate file.
-- "EMPLOYMENT SPINE" lists real employers and date ranges. Preserve each company name and start_date and end_date exactly. Same number of experience rows as spine rows. Ignore any titles stored in the JSON file.
-- Generate summary, skills, job titles, and experience bullets from the JD (not from a prior resume narrative). Stay broadly plausible per employer and dates.
+    const messages = [
+      { role: "system", content: OPENAI_SYSTEM_PROMPT },
+      { role: "user", content: userPrompt },
+    ];
 
-JD ALIGNMENT:
-- Root "title" (resume headline under the candidate name) and experience[0].title (MOST RECENT job, first row after sorting most-recent-first) MUST both be Senior-level titles. This rule overrides the JD posting title when the JD says Lead, Staff, Principal, Architect-without-Senior, or any mid-level title.
-- SENIORITY OVERRIDE (CRITICAL — NON-NEGOTIABLE):
-  • Root "title" and experience[0].title MUST use the word "Senior" (e.g. "Senior Software Engineer", "Senior Backend Engineer", "Senior Security Engineer", "Senior Technical Architect").
-  • NEVER use on root "title" or experience[0].title: Lead, Staff, Principal, Distinguished, Head, Director, Manager, VP, Intern, Junior, Associate, Entry Level, or roman/numeric levels (II, III, Level 2, etc.).
-  • If the JD title is "Lead Software Engineer", "Software Engineer", "Staff Engineer", "Principal Engineer", "Backend Engineer II", etc., map the role family from the JD but output Senior + role family on root "title" and experience[0].title only (e.g. JD "Lead Backend Engineer" → "Senior Backend Engineer"; JD "Software Engineer" → "Senior Software Engineer"; JD "Principal Security Engineer" → "Senior Security Engineer").
-  • Bullets, skills, and summary may still reflect JD duties (including lead/principal scope) even though the displayed title says Senior.
-- JOB TITLE FORMAT: Short standard corporate titles only (2–5 words). No tech stacks after dashes/colons/parentheses. WRONG: "Senior Software Engineer - C#". RIGHT: "Senior Software Engineer".
-- experience[1] onward (older roles): same JD job family; show realistic progression (mid-level or junior titles allowed on older rows only). Never Staff/Principal/Lead on any row. No tech suffixes on any title.
-
-SUMMARY (bullet format):
-- Return "summary" as a JSON array of 4–6 strings (each string is one summary bullet, not a paragraph).
-- Each bullet: one idea, strong action verb at the start (Led, Built, Reduced, Delivered, Architected, Partnered, etc.), weave JD tech with **bold** on tools/platforms where natural.
-- Include optional JD technologies when relevant (e.g. Vue3, MAUI/Xamarin, BI/ML, HTML5/CSS3, Python/Django) even if secondary to core stack.
-- If the candidate has more than 10 years of experience, say only "more than 10 years" or "over 10 years" in summary text, never an exact count like 14 years.
-
-TECHNICAL SKILLS (CRITICAL — DENSE SENIOR-LEVEL SECTION):
-- The skills section represents CURRENT capabilities of a seasoned senior engineer in the JD's role family. It is NOT limited to words copied from the JD. Skills are NOT bound by per-job technology timeline rules (those apply to experience bullets only).
-- Structure: use 6–10 categories tailored to the JD (e.g. Languages, Backend, Frontend, Cloud & Infrastructure, Databases, Data & Messaging, DevOps & CI/CD, Security, Testing & Observability, Tools & Methodologies — adapt labels to the role).
-- ORDER within each category: (1) highest-priority JD keywords first, (2) then expand with the full realistic ecosystem a senior engineer in this role would know from years of practice.
-- DENSITY (HARD): Each category MUST contain at least 12 skills (target 14–22 when credible). If a category would have fewer than 12, expand with adjacent tools, libraries, protocols, cloud services, and practices common to that stack until the minimum is met.
-- EXPANSION RULES: After JD terms, add related senior-level ecosystem items even if absent from the JD — e.g. for backend/security/cloud roles: REST, GraphQL, gRPC, OAuth2/JWT, Docker, Kubernetes, Terraform, CI/CD (GitHub Actions, Jenkins), monitoring (Prometheus, Grafana), logging, SQL/NoSQL variants, message queues (Kafka, Pub/Sub), Agile/Scrum, code review, system design. For frontend-heavy roles add HTML5, CSS3, webpack, testing libraries, etc. Stay plausible for the role family; do not invent niche tools with no connection.
-- Avoid exact duplicates across categories; slight variants OK (e.g. Docker and Containerization in different sections). No filler words — every item must be a real technology, tool, platform, or methodology.
-- This section should dominate ATS keyword coverage: comprehensive, detailed, and what a real experienced senior engineer's resume would list.
-
-EXPERIENCE BULLETS:
-- Approximately 4–8 bullets per role (fewer for short internships).
-- One idea per bullet. Start with a strong action verb. Include **bold** on key technologies.
-- At least 75% of bullets across the resume should include a measurable outcome (%, latency, throughput, time saved, scale, ticket volume, team size, etc.). Use plausible, modest numbers; avoid absurd claims.
-- Gold-pattern example: "Reduced API response time by 40% by implementing **Redis** caching and query optimization in **SQL Server** for multi-tenant SaaS service."
-- Where the JD implies full-stack or platform work, include explicit front-end collaboration in at least one bullet per recent role (e.g. partnered with front-end teams on API contracts, UI integration, design reviews).
-- Put the densest JD/modern stack in experience[0] and recent rows. Do NOT copy the full modern JD stack into every historical job.
-
-TECHNOLOGY TIMELINE (CRITICAL — NON-NEGOTIABLE):
-- Before writing bullets for EACH role, read that row's start_date and end_date. Every **bold** or plain technology in that role's bullets MUST have existed and been realistically used during that employment period (use the role's end year as the cutoff).
-- NEVER cite a framework/tool in a job that ended before that technology's public release. Reference release years (verify mentally before output):
-  • Angular (2+): 2016 — NOT in roles ending before 2016
-  • React: 2013 — NOT before 2013
-  • TypeScript: 2012 — NOT before 2012
-  • Vue.js: 2014 — NOT before 2014
-  • Next.js: 2016 — NOT before 2016
-  • Docker: 2013 — NOT before 2013
-  • Kubernetes / K8s: 2014 — NOT before 2014
-  • AWS Lambda: 2014 — NOT before 2014
-  • GraphQL: 2015 — NOT before 2015
-  • Terraform: 2014 — NOT before 2014
-- If unsure about release timing, use generic or period-appropriate alternatives instead of modern names (pre-2013 frontend: jQuery, Backbone.js, AngularJS 1.x; pre-2013 backend: PHP, Java, .NET, Ruby on Rails; pre-2014 infra: on-prem VMs, FTP/cron, manual deploys).
-- LEGACY / JUNIOR / OLDEST ROLES (titles with Intern/Junior/Associate, roles ending before 2014, third-or-later rows ending before 2018, OR the oldest row when it ended before 2016): bullets MUST use simpler, era-appropriate stacks only — monoliths, SQL, SVN/CVS, on-prem servers, basic scripting, jQuery-era frontend, Java/.NET/PHP, manual releases. Do NOT put Kubernetes, Terraform, GraphQL, Lambda/serverless, Next.js, or other modern senior/platform tooling in those rows even if the JD mentions them.
-- experience[0] (most recent): full JD-aligned modern stack is allowed when dates support it.
-
-CONSISTENCY:
-- Use the same date format as the spine (e.g. "Aug 2024 – Present"). Use an en-dash surrounded by spaces between dates in display strings if you output a combined range in text; in JSON use separate start_date and end_date fields exactly as in the spine.
-- Title Case for skill category names. No em dashes (—). No emojis.
-
-BOLD (**double asterisks**): only on technical terms in summary bullets and experience bullets. Never bold job titles, companies, or dates.
-
-Here is the candidate context (personal + education + employment spine only):
-
-\${candidateContext}
-
-Here is the target job description:
-
-\${jobDescription}
-
-FINAL CHECK:
-- Root "title" and experience[0].title both start with "Senior" and contain no Lead/Staff/Principal/mid-level markers.
-- For EVERY experience row: re-check start_date/end_date — no anachronistic tech; oldest/intern/junior rows use simple period-appropriate tools only.
-- skills: 6–10 categories; EVERY category has at least 12 items; JD keywords first in each list; section reads like a senior engineer's full stack, not a short JD paste.
-- summary is an array of 4–6 bullets; most experience bullets have metrics; spine companies/dates unchanged.
-- Every title is plain (no technology suffix).
-
-OUTPUT: Return a single JSON object only (no markdown fences, no commentary):
-
-{"title":"<Senior + JD role family e.g. Senior Software Engineer>","summary":["<bullet 1 with **bold**>","<bullet 2>",...],"skills":{"<CategoryName>":["<JD keyword first>", "<12-22 total per category>",...],...},"experience":[{"title":"<Senior + role for MOST RECENT row only>","company":"<exact from spine>","location":"","start_date":"<exact from spine>","end_date":"<exact from spine>","details":["<bullet>",...]},{"title":"<older row may be mid-level e.g. Software Engineer>",...}]}
-
-Order experience most recent first (same order as spine).`;
-
-    const prompt = resumePromptTemplate
-      .replace(/\$\{candidateContext\}/g, candidateContext)
-      .replace(/\$\{jobDescription\}/g, jd);
-
-    const aiResponse = await callGPT(prompt);
+    const aiResponse = await callGPT(messages);
 
     const finishReason = aiResponse.choices?.[0]?.finish_reason;
     const contentRaw = aiResponse.choices?.[0]?.message?.content ?? "";
@@ -443,14 +304,12 @@ Order experience most recent first (same order as spine).`;
       console.error("⚠️ WARNING: GPT hit max_tokens limit! Response was truncated.");
       console.log("🔄 Retrying with reduced requirements to fit in token limit...");
 
-      const concisePrompt = prompt
-        .replace(/4–6 strings/g, "3–4 strings")
-        .replace(/Approximately 4–8 bullets per role/g, "Approximately 3–5 bullets per role")
-        .replace(/at least 12 skills \(target 14–22/g, "at least 10 skills (target 12–16")
-        .replace(/6–10 categories/g, "5–8 categories")
-        .replace(/At least 75% of bullets/g, "At least 60% of bullets");
+      const retryMessages = [
+        { role: "system", content: OPENAI_SYSTEM_PROMPT_RETRY },
+        { role: "user", content: userPrompt },
+      ];
 
-      const retryResponse = await callGPT(concisePrompt, null, 10000);
+      const retryResponse = await callGPT(retryMessages, null, OPENAI_RETRY_MAX_TOKENS);
       console.log("Retry Response Metadata:");
       console.log("- Finish reason:", retryResponse.choices?.[0]?.finish_reason);
       console.log("- Output tokens:", retryResponse.usage?.completion_tokens);
@@ -539,9 +398,14 @@ Order experience most recent first (same order as spine).`;
       resumeContent.title = enforceSeniorTitle(resumeContent.title);
     }
 
-    // Convert **bold** to <strong> for HTML template
+    // Convert **bold** to <strong> for HTML template (summary and experience bullets only)
     const boldToStrong = (s) =>
       typeof s === "string" ? s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>") : s;
+
+    const stripSkillFormatting = (s) =>
+      typeof s === "string"
+        ? s.replace(/\*\*([^*]+)\*\*/g, "$1").replace(/<\/?(?:strong|b)>/gi, "").trim()
+        : s;
 
     // Summary: cap years wording; render as bullet list HTML for templates
     if (yearsOfExperience > 10) {
@@ -571,7 +435,13 @@ Order experience most recent first (same order as spine).`;
             ? key.replace(/\*/g, "").trim().replace(/\b\w/g, (c) => c.toUpperCase())
             : key;
         const items = Array.isArray(value)
-          ? [...new Set(value.map((v) => (typeof v === "string" ? v.trim() : v)).filter(Boolean))]
+          ? [
+              ...new Set(
+                value
+                  .map((v) => (typeof v === "string" ? stripSkillFormatting(v) : v))
+                  .filter(Boolean)
+              ),
+            ]
           : value;
         skillsClean[cleanKey || key] = items;
       }

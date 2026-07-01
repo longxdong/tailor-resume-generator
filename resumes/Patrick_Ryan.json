@@ -1,0 +1,44 @@
+{
+  "name": "Patrick Ryan",
+  "email": "patrick.ryan31@outlook.com",
+  "phone": "",
+  "location": "Dublin, Ireland",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "SoftServe",
+      "location": "",
+      "start_date": "May 2024",
+      "end_date": "Jun 2026"
+    },
+    {
+      "company": "Equita Group",
+      "location": "",
+      "start_date": "May 2019",
+      "end_date": "May 2024"
+    },
+    {
+      "company": "NVIDIA",
+      "location": "",
+      "start_date": "Aug 2015",
+      "end_date": "May 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master of Science in Computer Science",
+      "school": "Texas Tech University",
+      "start_year": "2015",
+      "end_year": "2017"
+    },
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Singapore Institute of Technology",
+      "start_year": "2011",
+      "end_year": "2015"
+    }
+  ]
+}

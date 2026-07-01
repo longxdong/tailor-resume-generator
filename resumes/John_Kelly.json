@@ -1,0 +1,44 @@
+{
+  "name": "John Kelly",
+  "email": "john.kelly541@outlook.com",
+  "phone": "",
+  "location": "Dublin, Ireland",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "ABFinance",
+      "location": "",
+      "start_date": "Aug 2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "Chainalysis",
+      "location": "",
+      "start_date": "Sep 2019",
+      "end_date": "Aug 2023"
+    },
+    {
+      "company": "Fujitsu",
+      "location": "",
+      "start_date": "Jul 2016",
+      "end_date": "Sep 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's Degree' in Computer Science",
+      "school": "University of Washington",
+      "start_year": "2015",
+      "end_year": "2017"
+    },
+    {
+      "degree": "Bachelor's Degree in Computer Science",
+      "school": "Tokyo Institute of Technology",
+      "start_year": "2011",
+      "end_year": "2015"
+    }
+  ]
+}

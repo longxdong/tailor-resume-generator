@@ -1,0 +1,45 @@
+{
+  "name": "Vincas Mockus",
+  "email": "vincas.mockus@outlook.com",
+  "title": "",
+  "phone": "",
+  "location": "Vilnius, Lithuania",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Nordstrom",
+      "location": "",
+      "start_date": "Nov 2024",
+      "end_date": "Jun 2026"
+    },
+    {
+      "company": "Banking Circle",
+      "location": "",
+      "start_date": "Jun 2021",
+      "end_date": "Nov 2024"
+    },
+    {
+      "company": "Kiln",
+      "location": "",
+      "start_date": "Aug 2019",
+      "end_date": "Jun 2021"
+    },
+    {
+      "company": "ClearBank",
+      "location": "",
+      "start_date": "Oct 2017",
+      "end_date": "Aug 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree":"Bachelor of Science in Computer Science",
+      "school":"Singapore Institute of Technology",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}
