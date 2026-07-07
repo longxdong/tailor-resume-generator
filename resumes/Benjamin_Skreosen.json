@@ -1,0 +1,44 @@
+{
+  "name": "Benjamin Skroesen",
+  "email": "benjamin.skreosen@outlook.com",
+  "phone": "",
+  "location": "Helsinki, Finland",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Concircle",
+      "location": "",
+      "start_date": "May 2025",
+      "end_date": "Jun 2026"
+    },
+    {
+      "company": "Synthesia",
+      "location": "",
+      "start_date": "May 2021",
+      "end_date": "May 2025"
+    },
+    {
+      "company": "TrueLayer",
+      "location": "",
+      "start_date": "Aug 2019",
+      "end_date": "May 2021"
+    },
+    {
+      "company": "Google",
+      "location": "",
+      "start_date": "Sep 2017",
+      "end_date": "Aug 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Texas Tech University",
+      "start_year": "2013",
+      "end_year": "2017"
+    }
+  ]
+}

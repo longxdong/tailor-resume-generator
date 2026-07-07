@@ -1,0 +1,50 @@
+{
+  "name": "Tomi Heikkinen",
+  "email": "tomi.heikkinen49@outlook.com",
+  "phone": "",
+  "location": "Helsinki, Finland",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Engineering Group",
+      "location": "",
+      "start_date": "Jun 2025",
+      "end_date": "Jun 2026"
+    },
+    {
+      "company": "Darktrace",
+      "location": "",
+      "start_date": "Jun 2021",
+      "end_date": "Jun 2025"
+    },
+    {
+      "company": "NVIDIA",
+      "location": "",
+      "start_date": "Aug 2018",
+      "end_date": "Jun 2021"
+    },
+    {
+      "company": "Accenture",
+      "location": "",
+      "start_date": "May 2017",
+      "end_date": "Aug 2018"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's degree in Computer Science",
+      "school": "University of Washington",
+      "start_year": "2016",
+      "end_year": "2018"
+    },
+    {
+      "degree": "Bachelor's degree in Computer Science",
+      "school": "University of Helsinki",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}

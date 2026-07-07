@@ -1,0 +1,44 @@
+{
+  "name": "Biao Zhang",
+  "email": "zhang.biao53@outlook.com",
+  "phone": "",
+  "location": "Helsinki, Finland",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "SoftServe",
+      "location": "",
+      "start_date": "Jun 2025",
+      "end_date": "Jun 2026"
+    },
+    {
+      "company": "Lenovo",
+      "location": "",
+      "start_date": "Nov 2021",
+      "end_date": "Jun 2025"
+    },
+    {
+      "company": "Adyen",
+      "location": "",
+      "start_date": "Feb 2018",
+      "end_date": "Nov 2021"
+    },
+    {
+      "company": "Fujitsu",
+      "location": "",
+      "start_date": "Jul 2016",
+      "end_date": "Feb 2018"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Singapore Institute of Technology",
+      "start_year": "2012",
+      "end_year": "2016"
+    }
+  ]
+}

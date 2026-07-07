@@ -1,0 +1,44 @@
+{
+  "name": "Mark Windsor",
+  "email": "mark.windsor07@outlook.com",
+  "phone": "",
+  "location": "Toronto, Canada",
+  "linkedin": "",
+  "website": "",
+  "title": "",
+  "experience": [
+    {
+      "company": "Net Solutions",
+      "location": "",
+      "start_date": "Sep 2025",
+      "end_date": "Jun 2026"
+    },
+    {
+      "company": "Cohere",
+      "location": "",
+      "start_date": "May 2021",
+      "end_date": "Sep 2025"
+    },
+    {
+      "company": "D2L",
+      "location": "",
+      "start_date": "Jun 2019",
+      "end_date": "May 2021"
+    },
+    {
+      "company": "Amazon",
+      "location": "",
+      "start_date": "Nov 2017",
+      "end_date": "Jun 2019"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "University of Toronto",
+      "start_year": "2013",
+      "end_year": "2017"
+    }
+  ]
+}

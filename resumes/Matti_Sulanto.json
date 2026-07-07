@@ -1,0 +1,50 @@
+{
+  "name": "Matti Sulanto",
+  "email": "matti.sulanto@outlook.com",
+  "phone": "",
+  "location": "Helsinki, Finland",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Plavno",
+      "location": "",
+      "start_date": "Jan 2026",
+      "end_date": "Jun 2026"
+    },
+    {
+      "company": "Baader Bank",
+      "location": "",
+      "start_date": "Jul 2022",
+      "end_date": "Jan 2026"
+    },
+    {
+      "company": "UpCloud",
+      "location": "",
+      "start_date": "Aug 2020",
+      "end_date": "Jul 2022"
+    },
+    {
+      "company": "Accenture",
+      "location": "",
+      "start_date": "Sep 2017",
+      "end_date": "Aug 2020"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's degree in Computer Science",
+      "school": "Georgia Institute of Technology",
+      "start_year": "2017",
+      "end_year": "2019"
+    },
+    {
+      "degree": "Bachelor's degree in Computer Science",
+      "school": "Aalto University",
+      "start_year": "2013",
+      "end_year": "2017"
+    }
+  ]
+}
