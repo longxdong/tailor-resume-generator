@@ -19,8 +19,8 @@ import {
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 /** Default max completion tokens for resume JSON (full resume fits well under this). */
-const OPENAI_MAX_COMPLETION_TOKENS = 16000;
-const OPENAI_RETRY_MAX_TOKENS = 12000;
+const OPENAI_MAX_COMPLETION_TOKENS = 80000;
+const OPENAI_RETRY_MAX_TOKENS = 50000;
 
 /** Normalize dashes and whitespace for consistent PDF output */
 function normalizeTextDashes(text) {
@@ -258,9 +258,8 @@ export default async function handler(req, res) {
       : [];
 
     const candidateContext = [
-      "CANDIDATE PERSONAL (use exactly for the resume header; do not change spelling of name or contact):",
-      profileData.name,
-      [
+      `NAME: ${profileData.name}`,
+      `CONTACT: ${[
         profileData.email,
         profileData.phone,
         profileData.location,
@@ -268,14 +267,12 @@ export default async function handler(req, res) {
         profileData.website,
       ]
         .filter(Boolean)
-        .join(" | "),
-      "",
-      "EDUCATION (facts only):",
-      ...educationLines,
-      "",
-      "EMPLOYMENT SPINE (non-negotiable: keep these company names and start_date/end_date exactly. Same number of roles as listed. Ignore any job titles in the JSON file; generate JD-aligned titles and bullets only.):",
-      ...employmentSpine.map((line) => `- ${line}`),
-    ].join("\n");
+        .join(" | ")}`,
+      educationLines.length > 0 ? `EDUCATION:\n${educationLines.map((l) => `- ${l}`).join("\n")}` : "",
+      `SPINE (exact companies/dates, ${employmentSpine.length} roles):\n${employmentSpine.map((line) => `- ${line}`).join("\n")}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
 
     const userPrompt = buildOpenAiUserPrompt(
       candidateContext,
