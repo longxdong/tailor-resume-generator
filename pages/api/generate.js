@@ -12,9 +12,15 @@ import {
 } from "../../lib/resume-prompt-sections";
 import { enforceSeniorTitle, sanitizeHistoricalTitle } from "../../lib/job-titles";
 import {
+  normalizeCertifications,
+  normalizeProject,
+  hasProjectContent,
+} from "../../lib/resume-extras";
+import {
   assessJdEligibility,
   FEDERAL_CLEARANCE_MESSAGE,
 } from "../../lib/jd-eligibility";
+import { clampBoldSpans } from "../../lib/bold-formatting";
 
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
@@ -43,13 +49,12 @@ function normalizeDateDisplay(dateStr) {
 /** summary: string[] or string → HTML for {{{summary}}} in templates */
 function formatSummaryHtml(summary, boldToStrong) {
   const apply = (s) => boldToStrong(normalizeTextDashes(s));
-  const listStyle =
-    "margin:0 0 6px 0;padding-left:1.15em;list-style:disc;font-size:10pt;line-height:1.45;color:#3d3d3d;";
 
   if (Array.isArray(summary)) {
     const items = summary.filter((s) => typeof s === "string" && s.trim()).map(apply);
     if (items.length === 0) return "";
-    return `<ul class="summary" style="${listStyle}">${items.map((li) => `<li>${li}</li>`).join("")}</ul>`;
+    const paragraph = items.join(" ");
+    return `<p class="summary">${paragraph}</p>`;
   }
   if (typeof summary === "string" && summary.trim()) {
     return `<p class="summary">${apply(summary)}</p>`;
@@ -150,6 +155,15 @@ function applyTechTimelineToExperience(experience) {
   experience.forEach((exp, idx) => {
     const endYear = parseJobYear(exp.end_date);
     const title = exp.title || "";
+    if (exp.project && typeof exp.project.summary === "string") {
+      exp.project.summary = sanitizeBulletTechTimeline(
+        exp.project.summary,
+        endYear,
+        idx,
+        total,
+        title
+      );
+    }
     if (!Array.isArray(exp.details)) return;
     exp.details = exp.details.map((d) =>
       sanitizeBulletTechTimeline(d, endYear, idx, total, title)
@@ -372,11 +386,15 @@ export default async function handler(req, res) {
       }
     }
     
-    // Validate required fields (summary may be string or array of bullets)
-    const hasSummary =
-      (typeof resumeContent.summary === "string" && resumeContent.summary.trim()) ||
-      (Array.isArray(resumeContent.summary) &&
-        resumeContent.summary.some((s) => typeof s === "string" && s.trim()));
+    // Validate required fields (summary: string preferred; array coerced to paragraph)
+    let summaryRaw = resumeContent.summary;
+    if (Array.isArray(summaryRaw)) {
+      summaryRaw = summaryRaw
+        .filter((s) => typeof s === "string" && s.trim())
+        .join(" ");
+      resumeContent.summary = summaryRaw;
+    }
+    const hasSummary = typeof resumeContent.summary === "string" && resumeContent.summary.trim();
 
     if (!resumeContent.title || !hasSummary || !resumeContent.skills || !resumeContent.experience) {
       console.error("Missing required fields in AI response:", Object.keys(resumeContent));
@@ -397,7 +415,9 @@ export default async function handler(req, res) {
 
     // Convert **bold** to <strong> for HTML template (summary and experience bullets only)
     const boldToStrong = (s) =>
-      typeof s === "string" ? s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>") : s;
+      typeof s === "string"
+        ? clampBoldSpans(s).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+        : s;
 
     const stripSkillFormatting = (s) =>
       typeof s === "string"
@@ -422,6 +442,8 @@ export default async function handler(req, res) {
         }
       });
     }
+
+    resumeContent.certifications = normalizeCertifications(resumeContent.certifications);
 
     // Skills: clean category keys; dedupe items; preserve JD-first order from model
     if (resumeContent.skills && typeof resumeContent.skills === "object") {
@@ -448,10 +470,10 @@ export default async function handler(req, res) {
         category: k,
         count: Array.isArray(v) ? v.length : 0,
       }));
-      const thinCategories = skillCategoryCounts.filter((c) => c.count > 0 && c.count < 12);
+      const thinCategories = skillCategoryCounts.filter((c) => c.count > 0 && c.count < 6);
       if (thinCategories.length > 0) {
         console.warn(
-          "Skills categories below 12 items:",
+          "Skills categories below 6 items:",
           thinCategories.map((c) => `${c.category}(${c.count})`).join(", ")
         );
       }
@@ -507,30 +529,43 @@ export default async function handler(req, res) {
     // Always anchor company/dates to JSON spine when counts match; use AI for titles and bullets
     const experience =
       spine.length > 0 && aiExp.length === spine.length
-        ? spine.map((job, idx) => ({
-            title: idx === 0
-              ? enforceSeniorTitle(aiExp[idx]?.title || "Engineer")
-              : sanitizeHistoricalTitle(aiExp[idx]?.title || "Engineer"),
-            company: job.company,
-            location: job.location && String(job.location).trim() ? job.location : "",
-            start_date: normalizeDateDisplay(job.start_date),
-            end_date: normalizeDateDisplay(job.end_date),
-            details: Array.isArray(aiExp[idx]?.details) ? aiExp[idx].details : [],
-          }))
-        : aiExp.map((e, idx) => ({
-            title: idx === 0
-              ? enforceSeniorTitle(e.title || "Engineer")
-              : sanitizeHistoricalTitle(e.title || "Engineer"),
-            company: e.company,
-            location: e.location && String(e.location).trim() ? e.location : "",
-            start_date: normalizeDateDisplay(e.start_date),
-            end_date: normalizeDateDisplay(e.end_date),
-            details: Array.isArray(e.details) ? e.details : [],
-          }));
+        ? spine.map((job, idx) => {
+            const project = normalizeProject(aiExp[idx]?.project);
+            return {
+              title: idx === 0
+                ? enforceSeniorTitle(aiExp[idx]?.title || "Engineer")
+                : sanitizeHistoricalTitle(aiExp[idx]?.title || "Engineer"),
+              company: job.company,
+              location: job.location && String(job.location).trim() ? job.location : "",
+              start_date: normalizeDateDisplay(job.start_date),
+              end_date: normalizeDateDisplay(job.end_date),
+              project: hasProjectContent(project) ? project : null,
+              details: Array.isArray(aiExp[idx]?.details) ? aiExp[idx].details : [],
+            };
+          })
+        : aiExp.map((e, idx) => {
+            const project = normalizeProject(e.project);
+            return {
+              title: idx === 0
+                ? enforceSeniorTitle(e.title || "Engineer")
+                : sanitizeHistoricalTitle(e.title || "Engineer"),
+              company: e.company,
+              location: e.location && String(e.location).trim() ? e.location : "",
+              start_date: normalizeDateDisplay(e.start_date),
+              end_date: normalizeDateDisplay(e.end_date),
+              project: hasProjectContent(project) ? project : null,
+              details: Array.isArray(e.details) ? e.details : [],
+            };
+          });
 
     // Timeline rules use authoritative spine dates; then convert markdown bold to HTML
     applyTechTimelineToExperience(experience);
     experience.forEach((exp) => {
+      if (exp.project) {
+        if (exp.project.summary) {
+          exp.project.summary = boldToStrong(normalizeTextDashes(exp.project.summary));
+        }
+      }
       if (Array.isArray(exp.details)) {
         exp.details = exp.details.map((d) => boldToStrong(normalizeTextDashes(d)));
       }
@@ -546,6 +581,7 @@ export default async function handler(req, res) {
       website: profileData.website,
       summary: summaryHtml,
       skills: resumeContent.skills,
+      certifications: resumeContent.certifications,
       experience,
       education: profileData.education,
     };

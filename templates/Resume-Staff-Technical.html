@@ -177,7 +177,33 @@
         clear: both;
       }
 
-      .edu-item {
+            .certifications-list {
+        font-size: 10pt;
+        line-height: 1.45;
+        margin-bottom: 4px;
+      }
+
+      .certification-item {
+        margin-bottom: 2px;
+      }
+
+      .certification-item:last-child {
+        margin-bottom: 0;
+      }
+
+      .exp-project {
+        font-size: 10pt;
+        line-height: 1.45;
+        margin: 4px 0 8px;
+        padding: 6px 8px;
+        border-left: 3px solid var(--accent, #1e3a5f);
+      }
+
+      .exp-project-name {
+        font-weight: 600;
+      }
+
+.edu-item {
         margin-bottom: 8px;
       }
 
@@ -218,7 +244,19 @@
     </section>
     {{/if}}
 
-    {{#if experience}}
+    
+    {{#if certifications}}
+    <section>
+      <h2>Certifications</h2>
+      <div class="certifications-list">
+        {{#each certifications}}
+        <div class="certification-item">{{this}}</div>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+{{#if experience}}
     <section>
       <h2>Experience</h2>
       {{#each experience}}
@@ -230,6 +268,12 @@
         <div class="exp-company">
           {{company}}{{#if location}}, {{location}}{{/if}}
         </div>
+        {{#if project}}
+        <div class="exp-project">
+          {{#if project.name}}<span class="exp-project-name">{{project.name}}</span>{{#if project.summary}} — {{/if}}{{/if}}{{#if project.summary}}{{{project.summary}}}{{/if}}
+        </div>
+        {{/if}}
+
         {{#if details}}
         <ul class="exp-details">
           {{#each details}}
