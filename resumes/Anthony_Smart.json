@@ -1,0 +1,44 @@
+{
+  "name": "Anthony Smart",
+  "email": "anthony.smart52@outlook.com",
+  "phone": "",
+  "location": "Kountze, Texas",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Tevpro",
+      "location": "",
+      "start_date": "Nov 2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "Red Rover",
+      "location": "",
+      "start_date": "Feb 2022",
+      "end_date": "Oct 2023"
+    },
+    {
+      "company": "Temporal Technologies",
+      "location": "",
+      "start_date": "Nov 2018",
+      "end_date": "Jan 2022"
+    },
+    {
+      "company": "CVS Health",
+      "location": "",
+      "start_date": "Feb 2014",
+      "end_date": "Oct 2018"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor' Degree in Computer Science",
+      "school": "Becker College",
+      "start_year": "2008",
+      "end_year": "2013"
+    }
+  ]
+}
