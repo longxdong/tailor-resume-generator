@@ -1,7 +1,7 @@
 {
   "name": "Mark Windsor",
   "email": "mark.windsor07@outlook.com",
-  "phone": "",
+  "phone": "+1 249 546 0250",
   "location": "Toronto, Canada",
   "linkedin": "",
   "website": "",
@@ -10,35 +10,41 @@
     {
       "company": "Net Solutions",
       "location": "",
-      "start_date": "Sep 2025",
-      "end_date": "Jun 2026"
+      "start_date": "Aug 2025",
+      "end_date": "Present"
     },
     {
-      "company": "Cohere",
+      "company": "AltaML",
       "location": "",
-      "start_date": "May 2021",
-      "end_date": "Sep 2025"
+      "start_date": "May 2022",
+      "end_date": "Aug 2025"
     },
     {
-      "company": "D2L",
+      "company": "ThinkOn",
       "location": "",
-      "start_date": "Jun 2019",
-      "end_date": "May 2021"
+      "start_date": "Sep 2020",
+      "end_date": "May 2022"
+    },
+    {
+      "company": "SOTI",
+      "location": "",
+      "start_date": "Mar 2018",
+      "end_date": "Sep 2020"
     },
     {
       "company": "Amazon",
       "location": "",
-      "start_date": "Nov 2017",
-      "end_date": "Jun 2019"
+      "start_date": "Aug 2017",
+      "end_date": "Mar 2018"
     }
   ],
   
   "education": [
     {
       "degree": "Bachelor of Science in Computer Science",
-      "school": "University of Toronto",
-      "start_year": "2013",
-      "end_year": "2017"
+      "school": "University of Victoria",
+      "start_year": "2014",
+      "end_year": "2018"
     }
   ]
 }
