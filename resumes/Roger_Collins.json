@@ -1,0 +1,44 @@
+{
+  "name": "Roger Collins",
+  "email": "roger.collins72@outlook.com",
+  "phone": "",
+  "location": "Port Arthur, Texas, United States",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "HCLTech",
+      "location": "",
+      "start_date": "Oct 2024",
+      "end_date": "Present"
+    },
+    {
+      "company": "Snapsheet Inc",
+      "location": "",
+      "start_date": "Aug 2018",
+      "end_date": "Oct 2024"
+    },
+    {
+      "company": "Microsoft",
+      "location": "",
+      "start_date": "May 2016",
+      "end_date": "Jul 2018"
+    },
+    {
+      "company": "The Zebra",
+      "location": "",
+      "start_date": "Jul 2014",
+      "end_date": "Apr 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor of Science in Computer Science",
+      "school": "Argosy University",
+      "start_year": "2010",
+      "end_year": "2014"
+    }
+  ]
+}

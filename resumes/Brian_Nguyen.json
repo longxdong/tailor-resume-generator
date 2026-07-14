@@ -1,0 +1,50 @@
+{
+  "name": "Brian Nguyen",
+  "email": "brian.nguyen87@outlook.com",
+  "phone": "",
+  "location": "Cypress, Texas, United States",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "AgileEngine",
+      "location": "",
+      "start_date": "Oct 2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "Jasper",
+      "location": "",
+      "start_date": "Jun 2021",
+      "end_date": "Sep 2023"
+    },
+    {
+      "company": "Yellow.ai",
+      "location": "",
+      "start_date": "Aug 2018",
+      "end_date": "May 2021"
+    },
+    {
+      "company": "CVS Health",
+      "location": "",
+      "start_date": "Oct 2015",
+      "end_date": "Aug 2018"
+    },
+    {
+      "company": "Amazon Web Services(AWS)",
+      "location": "",
+      "start_date": "Jan 2014",
+      "end_date": "Sep 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree in Computer Science",
+      "school": "Louisiana State University",
+      "start_year": "2009",
+      "end_year": "2013"
+    }
+  ]
+}

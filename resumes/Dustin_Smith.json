@@ -1,0 +1,44 @@
+{
+  "name": "Dustin Smith",
+  "email": "dustin.smith.dev@outlook.com",
+  "phone": "",
+  "location": "Wichita Falls, Texas, United States",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "Paycom",
+      "location": "",
+      "start_date": "Mar 2021",
+      "end_date": "Present"
+    },
+    {
+      "company": "IntelePeer",
+      "location": "",
+      "start_date": "Sep 2019",
+      "end_date": "Feb 2021"
+    },
+    {
+      "company": "Snappy",
+      "location": "",
+      "start_date": "Nov 2016",
+      "end_date": "Aug 2019"
+    },
+    {
+      "company": "Cprime",
+      "location": "",
+      "start_date": "Mar 2014",
+      "end_date": "Nov 2016"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Bachelor's degree in Computer Science",
+      "school": "MacMurray College",
+      "start_year": "2008",
+      "end_year": "2013"
+    }
+  ]
+}

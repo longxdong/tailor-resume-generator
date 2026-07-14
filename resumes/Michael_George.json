@@ -1,0 +1,50 @@
+{
+  "name": "Michael George",
+  "email": "michael.george980@outlook.com",
+  "phone": "",
+  "location": "Seguin, Texas, United States",
+  "linkedin": "",
+  "website": "",
+  
+  "experience": [
+    {
+      "company": "CTG",
+      "location": "",
+      "start_date": "Mar 2023",
+      "end_date": "Present"
+    },
+    {
+      "company": "Audible",
+      "location": "",
+      "start_date": "Jun 2018",
+      "end_date": "Feb 2023"
+    },
+    {
+      "company": "Booz Allen Hamilton",
+      "location": "",
+      "start_date": "Sep 2015",
+      "end_date": "May 2018"
+    },
+    {
+      "company": "EarthCam",
+      "location": "",
+      "start_date": "Nov 2012",
+      "end_date": "Aug 2015"
+    }
+  ],
+  
+  "education": [
+    {
+      "degree": "Master's degree in Computer Science",
+      "school": "Wilmington University",
+      "start_year": "2010",
+      "end_year": "2012"
+    },
+    {
+      "degree": "Bachelor's degree in Computer Science",
+      "school": "Delaware State University",
+      "start_year": "2006",
+      "end_year": "2010"
+    }
+  ]
+}
